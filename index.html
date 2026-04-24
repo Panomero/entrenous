@@ -1,43 +1,198 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2685.4">
-  <style type="text/css">
-    body {background-color: #0a0a0a}
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 38.4px Times; color: #efefef; -webkit-text-stroke: #efefef}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 7.2px Helvetica; color: #a9862d; -webkit-text-stroke: #a9862d}
-    p.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; color: #efefef; -webkit-text-stroke: #efefef; background-color: #090909; min-height: 14.0px}
-    p.p4 {margin: 0.0px 0.0px 0.0px 0.0px; font: 7.8px Helvetica; color: #efefef; color: rgba(239, 239, 239, 0.45); -webkit-text-stroke: rgba(239, 239, 239, 0.45); background-color: #090909}
-    p.p5 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 18.0px 'Helvetica Neue'; color: #efefef; -webkit-text-stroke: #efefef}
-    p.p6 {margin: 0.0px 0.0px 0.0px 0.0px; font: 13.2px Times; color: #efefef; -webkit-text-stroke: #efefef}
-    p.p7 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 7.8px 'Helvetica Neue'; color: #efefef; color: rgba(239, 239, 239, 0.45); -webkit-text-stroke: rgba(239, 239, 239, 0.45)}
-    p.p8 {margin: 0.0px 0.0px 0.0px 0.0px; text-align: center; font: 12.0px 'Helvetica Neue'; color: #a9862d; -webkit-text-stroke: #a9862d}
-    span.s1 {font-kerning: none; background-color: #090909}
-    span.s2 {font-kerning: none; color: #c9a057; background-color: #090909; -webkit-text-stroke: 0px #c9a057}
-    span.s3 {font-kerning: none}
-    span.s4 {font-kerning: none; background-color: #141414}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entre Nous</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  :root { --gold: #B8973A; --gold-soft: #D4AF6A; --dark: #080808; --mid: #1A1A1A; --border: rgba(255,255,255,0.08); --text: #F2F2F2; --muted: rgba(242,242,242,0.45); --green: #25D366; }
+  body { background: var(--dark); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
+  .wrap { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; }
+  .lang-screen { width: 100%; display: flex; flex-direction: column; align-items: center; animation: rise 0.8s cubic-bezier(.16,1,.3,1) both; }
+  .lang-brand { text-align: center; margin-bottom: 3rem; }
+  .lang-brand-en { font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 400; line-height: 1; color: var(--text); }
+  .lang-brand-en em { font-style: italic; color: var(--gold-soft); }
+  .lang-brand-sub { margin-top: 0.6rem; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); }
+  .lang-sep { width: 1px; height: 30px; background: linear-gradient(to bottom, transparent, var(--gold), transparent); margin-bottom: 2.5rem; }
+  .lang-prompt { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 1.5rem; }
+  .lang-buttons { display: flex; flex-direction: column; gap: 0.75rem; width: 100%; }
+  .lang-btn { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.4rem; background: var(--mid); border: 1px solid var(--border); border-radius: 14px; cursor: pointer; transition: all 0.2s ease; color: var(--text); width: 100%; }
+  .lang-btn:hover { border-color: var(--gold); background: rgba(184,151,58,0.06); }
+  .lang-btn:active { transform: scale(0.98); }
+  .lang-btn-left { display: flex; align-items: center; gap: 0.9rem; }
+  .lang-flag { font-size: 1.5rem; line-height: 1; }
+  .lang-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; text-align: left; }
+  .lang-native { font-size: 0.65rem; color: var(--muted); margin-top: 0.1rem; }
+  .lang-arrow { color: var(--gold); opacity: 0.6; font-size: 1rem; }
+  .main-screen { width: 100%; display: none; flex-direction: column; align-items: center; }
+  .main-screen.active { display: flex; }
+  .lang-switch { display: flex; gap: 0.5rem; margin-bottom: 2rem; animation: rise 1s cubic-bezier(.16,1,.3,1) both; }
+  .lang-switch-btn { font-size: 0.6rem; letter-spacing: 0.1em; color: var(--muted); background: none; border: 1px solid var(--border); padding: 0.3rem 0.7rem; border-radius: 20px; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+  .lang-switch-btn:hover, .lang-switch-btn.active { border-color: var(--gold); color: var(--gold); }
+  .brand { text-align: center; margin-bottom: 3rem; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.05s both; }
+  .brand-en { font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 400; line-height: 1; }
+  .brand-en em { font-style: italic; color: var(--gold-soft); }
+  .brand-sub { margin-top: 0.6rem; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); }
+  .sep { width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--gold), transparent); margin-bottom: 3rem; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.1s both; }
+  .services { width: 100%; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.15s both; }
+  .service-card { background: var(--mid); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; }
+  .service-tag { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.55rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem; }
+  .service-tag-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); }
+  .service-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 400; margin-bottom: 0.5rem; }
+  .service-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.6; font-weight: 300; margin-bottom: 1rem; }
+  .service-features { margin-bottom: 1.1rem; }
+  .service-feature { display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.67rem; color: var(--muted); line-height: 1.5; margin-bottom: 0.4rem; }
+  .sf-icon { color: var(--gold); flex-shrink: 0; }
+  .btn-primary { display: flex; align-items: center; justify-content: center; gap: 0.6rem; width: 100%; padding: 0.9rem 1.5rem; background: var(--gold); color: #000; text-decoration: none; border-radius: 12px; font-size: 0.82rem; font-weight: 500; transition: all 0.2s ease; }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-primary:active { transform: scale(0.98); }
+  .channel-tier { font-size: 0.62rem; color: var(--muted); margin: 0.9rem 0 0.4rem; }
+  .channel-options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  .channel-opt { display: flex; align-items: center; justify-content: center; gap: 0.35rem; padding: 0.55rem; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; font-size: 0.62rem; color: var(--muted); transition: all 0.2s; }
+  .channel-opt:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+  .channel-opt-wa { color: rgba(37,211,102,0.7); }
+  .channel-opt-wa:hover { color: var(--green); border-color: rgba(37,211,102,0.25); }
+  .ch-divider { display: flex; align-items: center; gap: 0.75rem; margin: 0.7rem 0; }
+  .ch-divider::before, .ch-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .ch-divider span { font-size: 0.55rem; color: rgba(242,242,242,0.2); }
+  .footer { margin-top: 3rem; text-align: center; font-size: 0.6rem; color: rgba(242,242,242,0.18); letter-spacing: 0.12em; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.35s both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+</style>
 </head>
 <body>
-<p class="p1"><span class="s1">Entre </span><span class="s2"><i>Nous</i><i></i></span></p>
-<p class="p2"><span class="s1">PRIVATE SELECTION</span></p>
-<p class="p3"><span class="s3"></span><br></p>
-<p class="p4"><span class="s3">CHOOSE YOUR LANGUAGE</span></p>
-<p class="p5"><span class="s4">🇬🇧</span></p>
-<p class="p6"><span class="s4">English</span></p>
-<p class="p7"><span class="s4">Continue in English</span></p>
-<p class="p8"><span class="s4">→</span></p>
-<p class="p5"><span class="s4">🇷🇺</span></p>
-<p class="p6"><span class="s4">Русский</span></p>
-<p class="p7"><span class="s4">Продолжить на русском</span></p>
-<p class="p8"><span class="s4">→</span></p>
-<p class="p5"><span class="s4">🇫🇷</span></p>
-<p class="p6"><span class="s4">Français</span></p>
-<p class="p7"><span class="s4">Continuer en français</span></p>
-<p class="p8"><span class="s4">→</span></p>
+<div class="wrap">
+  <div class="lang-screen" id="langScreen">
+    <div class="lang-brand">
+      <div class="lang-brand-en">Entre <em>Nous</em></div>
+      <div class="lang-brand-sub">Private Selection</div>
+    </div>
+    <div class="lang-sep"></div>
+    <div class="lang-prompt">Choose your language</div>
+    <div class="lang-buttons">
+      <button class="lang-btn" onclick="setLang('en')">
+        <div class="lang-btn-left"><span class="lang-flag">🇬🇧</span><div><div class="lang-name">English</div><div class="lang-native">Continue in English</div></div></div>
+        <span class="lang-arrow">→</span>
+      </button>
+      <button class="lang-btn" onclick="setLang('ru')">
+        <div class="lang-btn-left"><span class="lang-flag">🇷🇺</span><div><div class="lang-name">Русский</div><div class="lang-native">Продолжить на русском</div></div></div>
+        <span class="lang-arrow">→</span>
+      </button>
+      <button class="lang-btn" onclick="setLang('fr')">
+        <div class="lang-btn-left"><span class="lang-flag">🇫🇷</span><div><div class="lang-name">Français</div><div class="lang-native">Continuer en français</div></div></div>
+        <span class="lang-arrow">→</span>
+      </button>
+    </div>
+  </div>
+  <div class="main-screen" id="mainScreen">
+    <div class="lang-switch">
+      <button class="lang-switch-btn" onclick="setLang('en')" id="btn-en">EN</button>
+      <button class="lang-switch-btn" onclick="setLang('ru')" id="btn-ru">RU</button>
+      <button class="lang-switch-btn" onclick="setLang('fr')" id="btn-fr">FR</button>
+    </div>
+    <div class="brand"><div class="brand-en">Entre <em>Nous</em></div><div class="brand-sub">Private Selection</div></div>
+    <div class="sep"></div>
+    <div class="services">
+      <div class="service-card">
+        <div class="service-tag"><span class="service-tag-dot"></span><span id="tag-bot"></span></div>
+        <div class="service-title" id="title-bot"></div>
+        <div class="service-desc" id="desc-bot"></div>
+        <div class="service-features">
+          <div class="service-feature"><span class="sf-icon">✦</span><span id="feat-bot-1"></span></div>
+          <div class="service-feature"><span class="sf-icon">✦</span><span id="feat-bot-2"></span></div>
+          <div class="service-feature"><span class="sf-icon">✦</span><span id="feat-bot-3"></span></div>
+        </div>
+        <a href="https://t.me/entrenous_access_bot" class="btn-primary">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+          <span id="btn-bot"></span>
+        </a>
+      </div>
+      <div class="service-card">
+        <div class="service-tag"><span class="service-tag-dot"></span><span id="tag-ch"></span></div>
+        <div class="service-title" id="title-ch"></div>
+        <div class="service-desc" id="desc-ch"></div>
+        <div class="service-features">
+          <div class="service-feature"><span class="sf-icon">✦</span><span id="feat-ch-1"></span></div>
+          <div class="service-feature"><span class="sf-icon">✦</span><span id="feat-ch-2"></span></div>
+        </div>
+        <div class="channel-tier" id="ch-excl-label"></div>
+        <div class="channel-options">
+          <a href="https://t.me/+CBPjEPblgngwNThi" class="channel-opt">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>Telegram</a>
+          <a href="https://whatsapp.com/channel/0029Vb7x5cm8aKvQqVtU541u" class="channel-opt channel-opt-wa">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a>
+        </div>
+        <div class="ch-divider"><span id="ch-or"></span></div>
+        <div class="channel-tier" id="ch-best-label"></div>
+        <div class="channel-options">
+          <a href="https://t.me/+te-eh6m2CvxkNzJi" class="channel-opt">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>Telegram</a>
+          <a href="https://whatsapp.com/channel/0029VbC5jVwCRs1sTVamQH0k" class="channel-opt channel-opt-wa">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="12" height="12"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">© Entre Nous · Private Selection</div>
+  </div>
+</div>
+<script>
+var T = {
+  en: {
+    'tag-bot':'AI Assistant','title-bot':'Personal shopping experience',
+    'desc-bot':'One tap to access our full collection. Our AI assistant knows every bottle and vintage — ask anything, get a recommendation, and place your order directly in the chat.',
+    'feat-bot-1':'Access the full, up-to-date exclusive collection',
+    'feat-bot-2':'Ask questions, get picks, order instantly',
+    'feat-bot-3':'Priority service & personalised selections',
+    'btn-bot':'Open AI Assistant',
+    'tag-ch':'Channel','title-ch':'Stay in the loop',
+    'desc-ch':'Subscribe to receive curated posts — new arrivals, rare finds and special offers. No chats, no orders — just inspiration. Choose your tier:',
+    'feat-ch-1':'New arrivals & exclusive drops',
+    'feat-ch-2':'No spam — only what matters',
+    'ch-excl-label':'✦ Exclusive — rare & limited allocations',
+    'ch-or':'or',
+    'ch-best-label':'✦ Best Selection — curated value picks'
+  },
+  ru: {
+    'tag-bot':'AI-помощник','title-bot':'Личный опыт покупки',
+    'desc-bot':'Один клик — и вся коллекция у вас. Наш AI-помощник знает каждую бутылку. Задавайте вопросы, получайте рекомендации и оформляйте заказ прямо в чате.',
+    'feat-bot-1':'Доступ к актуальной эксклюзивной коллекции',
+    'feat-bot-2':'Вопросы, рекомендации и заказ в одном месте',
+    'feat-bot-3':'Приоритетный сервис и персональный подбор',
+    'btn-bot':'Открыть AI-помощника',
+    'tag-ch':'Канал','title-ch':'Будьте в курсе',
+    'desc-ch':'Подпишитесь и получайте посты — новинки, редкие находки и предложения. Без заказов — только вдохновение. Выберите уровень:',
+    'feat-ch-1':'Новые поступления и эксклюзивные предложения',
+    'feat-ch-2':'Без спама — только самое важное',
+    'ch-excl-label':'✦ Эксклюзив — редкие и лимитированные партии',
+    'ch-or':'или',
+    'ch-best-label':'✦ Лучший выбор — отборные вина по ценности'
+  },
+  fr: {
+    'tag-bot':'Assistant IA','title-bot':"Expérience d'achat personnelle",
+    'desc-bot':"Un seul clic pour accéder à toute la collection. Notre assistant IA connaît chaque bouteille — posez vos questions, obtenez des recommandations et commandez directement.",
+    'feat-bot-1':"Accès à la collection exclusive et à jour",
+    'feat-bot-2':'Questions, recommandations et commande en un lieu',
+    'feat-bot-3':'Service prioritaire et sélections personnalisées',
+    'btn-bot':"Ouvrir l'Assistant IA",
+    'tag-ch':'Chaîne','title-ch':'Restez informé',
+    'desc-ch':"Abonnez-vous pour recevoir des publications — nouvelles arrivées et offres spéciales. Pas de commandes, juste de l'inspiration. Choisissez votre niveau:",
+    'feat-ch-1':'Nouvelles arrivées et offres exclusives',
+    'feat-ch-2':"Pas de spam — seulement l'essentiel",
+    'ch-excl-label':'✦ Exclusif — allocations rares et limitées',
+    'ch-or':'ou',
+    'ch-best-label':'✦ Meilleure Sélection — vins de valeur curatés'
+  }
+};
+function setLang(l) {
+  var t = T[l];
+  for (var k in t) { var e = document.getElementById(k); if (e) e.innerHTML = t[k]; }
+  ['en','ru','fr'].forEach(function(x){ var b=document.getElementById('btn-'+x); if(b) b.classList.toggle('active', x===l); });
+  document.getElementById('langScreen').style.display='none';
+  document.getElementById('mainScreen').classList.add('active');
+  sessionStorage.setItem('lang',l);
+}
+var sl=sessionStorage.getItem('lang'); if(sl) setLang(sl);
+</script>
 </body>
 </html>
