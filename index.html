@@ -3,100 +3,370 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Entre Nous</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Entre Nous — Private Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-  :root { --gold: #B8973A; --gold-soft: #D4AF6A; --dark: #080808; --mid: #1A1A1A; --border: rgba(255,255,255,0.08); --text: #F2F2F2; --muted: rgba(242,242,242,0.45); --green: #25D366; }
-  body { background: var(--dark); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
-  .wrap { width: 100%; max-width: 420px; display: flex; flex-direction: column; align-items: center; }
-  .brand { text-align: center; margin-bottom: 3.5rem; animation: rise 1s cubic-bezier(.16,1,.3,1) both; }
-  .brand-en { font-family: 'Playfair Display', serif; font-size: 3.2rem; font-weight: 400; line-height: 1; color: var(--text); }
-  .brand-en em { font-style: italic; color: var(--gold-soft); }
-  .brand-sub { margin-top: 0.6rem; font-size: 0.6rem; font-weight: 500; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); }
-  .sep { width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, var(--gold), transparent); margin-bottom: 3.5rem; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.1s both; }
-  .headline { text-align: center; margin-bottom: 3rem; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.15s both; }
-  .headline h2 { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 400; line-height: 1.5; margin-bottom: 0.75rem; }
-  .headline p { font-size: 0.8rem; font-weight: 300; line-height: 1.7; color: var(--muted); }
-  .cta-primary { width: 100%; margin-bottom: 0.75rem; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.2s both; }
-  .btn-primary { display: flex; align-items: center; justify-content: center; gap: 0.6rem; width: 100%; padding: 1rem 1.5rem; background: var(--gold); color: #000; text-decoration: none; border-radius: 12px; font-size: 0.85rem; font-weight: 500; transition: all 0.2s ease; }
-  .btn-primary:hover { filter: brightness(1.1); }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-primary svg { width: 18px; height: 18px; flex-shrink: 0; }
-  .badge { background: rgba(0,0,0,0.2); color: rgba(0,0,0,0.65); font-size: 0.55rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.2rem 0.5rem; border-radius: 4px; }
-  .cta-note { text-align: center; font-size: 0.65rem; color: var(--muted); margin-bottom: 2.5rem; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.25s both; }
-  .or-divider { display: flex; align-items: center; gap: 1rem; width: 100%; margin-bottom: 2rem; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.3s both; }
-  .or-divider::before, .or-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .or-divider span { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.1em; white-space: nowrap; }
-  .channels { width: 100%; display: flex; flex-direction: column; gap: 0.75rem; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.35s both; }
-  .channel-card { background: var(--mid); border: 1px solid var(--border); border-radius: 16px; padding: 1.1rem 1.25rem; transition: border-color 0.2s; }
-  .channel-card:hover { border-color: rgba(255,255,255,0.15); }
-  .channel-name { font-size: 0.75rem; font-weight: 500; color: var(--text); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
-  .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
-  .channel-desc { font-size: 0.68rem; color: var(--muted); font-weight: 300; margin-bottom: 1rem; line-height: 1.5; }
-  .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
-  .btn-sm { display: flex; align-items: center; justify-content: center; gap: 0.4rem; padding: 0.65rem 0.8rem; border-radius: 10px; text-decoration: none; font-size: 0.7rem; font-weight: 500; transition: all 0.2s ease; border: 1px solid transparent; }
-  .btn-sm:active { transform: scale(0.97); }
-  .btn-sm svg { width: 14px; height: 14px; flex-shrink: 0; }
-  .btn-tg { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); color: var(--text); }
-  .btn-tg:hover { background: rgba(255,255,255,0.09); border-color: rgba(255,255,255,0.18); }
-  .btn-wa { background: rgba(37,211,102,0.08); border-color: rgba(37,211,102,0.2); color: var(--green); }
-  .btn-wa:hover { background: rgba(37,211,102,0.14); border-color: rgba(37,211,102,0.35); }
-  .footer { margin-top: 3rem; text-align: center; font-size: 0.6rem; color: rgba(242,242,242,0.18); letter-spacing: 0.12em; animation: rise 1s cubic-bezier(.16,1,.3,1) 0.4s both; }
-  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8D5A3;
+    --dark: #0A0A0A;
+    --dark-2: #141414;
+    --cream: #F5F0E8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 100%, rgba(201,168,76,0.05) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  /* Grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 2rem;
+    max-width: 480px;
+    width: 100%;
+    animation: fadeUp 1.2s ease forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .logo-line {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 0 auto 2rem;
+    animation: expand 1.5s ease 0.3s forwards;
+    transform: scaleX(0);
+  }
+
+  @keyframes expand {
+    to { transform: scaleX(1); }
+  }
+
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 8vw, 4rem);
+    font-weight: 300;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+    animation: fadeUp 1.2s ease 0.2s forwards;
+    opacity: 0;
+  }
+
+  .logo em {
+    font-style: italic;
+    color: var(--gold);
+  }
+
+  .tagline {
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 3.5rem;
+    animation: fadeUp 1.2s ease 0.4s forwards;
+    opacity: 0;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    animation: fadeUp 1.2s ease 0.5s forwards;
+    opacity: 0;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+  }
+
+  .divider-text {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.4);
+  }
+
+  .intro {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 300;
+    font-style: italic;
+    color: rgba(245,240,232,0.7);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    animation: fadeUp 1.2s ease 0.6s forwards;
+    opacity: 0;
+  }
+
+  .channels {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    animation: fadeUp 1.2s ease 0.7s forwards;
+    opacity: 0;
+  }
+
+  .channel-group {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(201,168,76,0.15);
+    border-radius: 2px;
+    padding: 1.2rem 1.5rem;
+  }
+
+  .channel-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .channel-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(201,168,76,0.2);
+  }
+
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.6rem;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    border-radius: 1px;
+    cursor: pointer;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .btn-tg {
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold-light);
+  }
+
+  .btn-tg:hover {
+    background: rgba(201,168,76,0.2);
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-1px);
+  }
+
+  .btn-wa {
+    background: rgba(37,211,102,0.05);
+    border: 1px solid rgba(37,211,102,0.2);
+    color: rgba(37,211,102,0.7);
+  }
+
+  .btn-wa:hover {
+    background: rgba(37,211,102,0.1);
+    border-color: rgba(37,211,102,0.4);
+    color: rgb(37,211,102);
+    transform: translateY(-1px);
+  }
+
+  .btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .recommended {
+    background: var(--gold);
+    color: var(--dark);
+    font-size: 0.45rem;
+    letter-spacing: 0.2em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1px;
+    vertical-align: middle;
+    margin-left: 0.3rem;
+  }
+
+  .tg-main {
+    animation: fadeUp 1.2s ease 0.8s forwards;
+    opacity: 0;
+    margin-bottom: 2rem;
+  }
+
+  .btn-tg-main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, rgba(201,168,76,0.15), rgba(201,168,76,0.05));
+    border: 1px solid rgba(201,168,76,0.4);
+    color: var(--gold-light);
+    transition: all 0.4s ease;
+    border-radius: 1px;
+    font-family: 'Montserrat', sans-serif;
+    width: 100%;
+  }
+
+  .btn-tg-main:hover {
+    background: linear-gradient(135deg, rgba(201,168,76,0.25), rgba(201,168,76,0.1));
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(201,168,76,0.1);
+  }
+
+  .btn-tg-main svg { width: 18px; height: 18px; }
+
+  .note {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    color: rgba(245,240,232,0.25);
+    margin-top: 0.5rem;
+    animation: fadeUp 1.2s ease 0.9s forwards;
+    opacity: 0;
+  }
+
+  .footer-line {
+    margin-top: 3rem;
+    width: 40px;
+    height: 1px;
+    background: rgba(201,168,76,0.2);
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeUp 1.2s ease 1s forwards;
+    opacity: 0;
+  }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="brand">
-    <div class="brand-en">Entre <em>Nous</em></div>
-    <div class="brand-sub">Private Selection</div>
+
+<div class="container">
+  <div class="logo-line"></div>
+  
+  <h1 class="logo">Entre <em>Nous</em></h1>
+  <p class="tagline">Private Selection</p>
+
+  <div class="divider">
+    <span class="divider-text">Join Us</span>
   </div>
-  <div class="sep"></div>
-  <div class="headline">
-    <h2>Curated wines &amp; fine<br><em>delicacies</em></h2>
-    <p>Private access to exceptional wines,<br>caviar and jamon. Just between us.</p>
-  </div>
-  <div class="cta-primary">
-    <a href="https://t.me/entrenous_access_bot" class="btn-primary">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
-      Join on Telegram
-      <span class="badge">Recommended</span>
+
+  <p class="intro">
+    Curated wines, fine caviar &amp; exceptional delicacies.<br>
+    Private access. Just between us.
+  </p>
+
+  <!-- Telegram main CTA -->
+  <div class="tg-main">
+    <a href="https://t.me/entrenous_access_bot" class="btn-tg-main">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/>
+      </svg>
+      Join via Telegram
+      <span class="recommended">Recommended</span>
     </a>
+    <p class="note">Interactive service · AI assistant · Priority access</p>
   </div>
-  <p class="cta-note">AI assistant · Interactive service · Priority access</p>
-  <div class="or-divider"><span>or subscribe to a channel</span></div>
+
+  <!-- Channel selection -->
   <div class="channels">
-    <div class="channel-card">
-      <div class="channel-name"><span class="dot"></span>Exclusive</div>
-      <div class="channel-desc">Limited allocations from independent wineries. Rare finds.</div>
+    <div class="channel-group">
+      <div class="channel-label">🔒 Exclusive Channel</div>
       <div class="btn-row">
-        <a href="https://t.me/+CBPjEPblgngwNThi" class="btn-sm btn-tg">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+        <a href="https://t.me/+CBPjEPblgngwNThi" class="btn btn-tg">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/>
+          </svg>
           Telegram
         </a>
-        <a href="https://whatsapp.com/channel/0029Vb7x5cm8aKvQqVtU541u" class="btn-sm btn-wa">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <a href="https://whatsapp.com/channel/0029Vb7x5cm8aKvQqVtU541u" class="btn btn-wa">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
           WhatsApp
         </a>
       </div>
     </div>
-    <div class="channel-card">
-      <div class="channel-name"><span class="dot"></span>Best Selection</div>
-      <div class="channel-desc">Curated wines with exceptional character and value.</div>
+
+    <div class="channel-group">
+      <div class="channel-label">🔥 Best Selection</div>
       <div class="btn-row">
-        <a href="https://t.me/+te-eh6m2CvxkNzJi" class="btn-sm btn-tg">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/></svg>
+        <a href="https://t.me/+te-eh6m2CvxkNzJi" class="btn btn-tg">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/>
+          </svg>
           Telegram
         </a>
-        <a href="https://whatsapp.com/channel/0029VbC5jVwCRs1sTVamQH0k" class="btn-sm btn-wa">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <a href="https://whatsapp.com/channel/0029VbC5jVwCRs1sTVamQH0k" class="btn btn-wa">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
           WhatsApp
         </a>
       </div>
     </div>
   </div>
-  <div class="footer">© Entre Nous · Private Selection</div>
+
+  <div class="footer-line"></div>
 </div>
+
 </body>
 </html>
