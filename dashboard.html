@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entre Nous Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#f8f7f5;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:#1a1a1a;min-height:100vh}
+.header{background:#080808;color:#f2f2f2;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.brand{font-family:Georgia,serif;font-size:1.4rem;font-style:italic;color:#D4AF6A}
+.sub{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(242,242,242,.45);margin-top:2px}
+.refresh-btn{background:rgba(184,151,58,.15);border:1px solid #B8973A;color:#D4AF6A;padding:5px 14px;border-radius:6px;font-size:11px;cursor:pointer}
+.refresh-btn:hover{background:rgba(184,151,58,.25)}
+.upd{font-size:11px;color:rgba(242,242,242,.35);margin-bottom:4px}
+.container{max-width:1200px;margin:0 auto;padding:2rem}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
+.mc{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:1.25rem}
+.ml{font-size:11px;color:#6b6b6b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.mv{font-size:28px;font-weight:600;color:#1a1a1a;line-height:1}
+.mu{font-size:12px;color:#6b6b6b;margin-top:4px}
+.mc.danger .mv{color:#E24B4A}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:2rem}
+.card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:1.5rem}
+.ct{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6b6b6b;margin-bottom:1.25rem}
+.chart-wrap{position:relative;height:220px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:8px 12px;color:#6b6b6b;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid rgba(0,0,0,.08)}
+td{padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.06);color:#1a1a1a}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
+.bn{background:#FEF3C7;color:#B45309}
+.bp{background:#D1FAE5;color:#065F46}
+.bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bar-label{font-size:12px;color:#1a1a1a;min-width:160px}
+.bar-bg{flex:1;height:8px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+.bar-qty{font-size:12px;color:#6b6b6b;min-width:70px;text-align:right}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.li{display:flex;align-items:center;gap:6px;font-size:12px;color:#6b6b6b}
+.ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.loading{text-align:center;padding:4rem;color:#6b6b6b;font-size:14px}
+@media(max-width:768px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.container{padding:1rem}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div><div class="brand">Entre Nous</div><div class="sub">Private Selection — Dashboard</div></div>
+  <div style="text-align:right"><div class="upd" id="upd">Loading...</div><button class="refresh-btn" onclick="load()">Refresh</button></div>
+</div>
+<div class="container" id="app"><div class="loading">Loading...</div></div>
+<script>
+const SID='1kgIr-VSU2gXfrNjFTGBr3uzcpcnGQV21GcBQ8QP4Y6Y',GID='1754990298';
+let cc=null;
+function load(){
+  document.getElementById('upd').textContent='Updating...';
+  fetch(`https://docs.google.com/spreadsheets/d/${SID}/export?format=csv&gid=${GID}`)
+    .then(r=>r.text()).then(render).catch(()=>{
+      document.getElementById('app').innerHTML='<div class="loading">Error. Make sure the spreadsheet is public (Viewer access).</div>';
+    });
+}
+function render(csv){
+  const rows=csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
+  let m={},cat={},stock=[],unpaid=[],sec='';
+  for(let i=0;i<rows.length;i++){
+    const r=rows[i],f=(r[0]||'').trim();
+    if(f.startsWith('updated:')){document.getElementById('upd').textContent='Updated: '+new Date(f.replace('updated:','')).toLocaleString('ru-RU');continue;}
+    if(['METRICS','rev_today','CATEGORIES','wine','name'].includes(f))continue;
+    if(f==='STOCK'){sec='stock';continue;}
+    if(f==='UNPAID'){sec='unpaid';continue;}
+    if(sec===''&&!isNaN(parseFloat(r[0]))&&r.length>=4&&!m.done){m={t:+r[0]||0,w:+r[1]||0,mo:+r[2]||0,a:+r[3]||0,ot:+r[4]||0,oa:+r[5]||0};continue;}
+    if(sec===''&&!isNaN(parseFloat(r[0]))&&m.t!==undefined&&!cat.done){cat={wine:+r[0]||0,cav:+r[1]||0,leg:+r[2]||0,bon:+r[3]||0,sl:+r[4]||0};cat.done=true;continue;}
+    if(sec==='stock'&&f&&!isNaN(parseFloat(r[2])))stock.push({n:r[0],t:r[1],q:+r[2],u:r[3],p:+r[4]||0});
+    if(sec==='unpaid'&&f&&r[1])unpaid.push({id:r[0],d:r[1],cl:r[2],it:r[3],am:+r[4]||0,st:r[5]});
+  }
+  const upCnt=unpaid.filter(u=>u.st==='new').length;
+  const upTot=unpaid.filter(u=>u.st==='new').reduce((s,u)=>s+u.am,0);
+  const avg=m.oa>0?Math.round(m.a/m.oa):0;
+  const maxQ=Math.max(...stock.map(s=>s.q),1);
+  const colors={'':'#378ADD','Красное':'#E24B4A','Белое':'#B5D4F4','Розовое':'#ED93B1','Шампанское':'#EF9F27','Оранжевое':'#EF9F27','Просекко':'#C0DD97','Caviar':'#888780','Jamon boneless':'#1D9E75','Jamon leg':'#534AB7','Jamon sliced':'#B8973A'};
+  function barColor(s){return colors[s.t]||colors[''];}
+  document.getElementById('app').innerHTML=`
+  <div class="metrics">
+    <div class="mc"><div class="ml">Revenue today</div><div class="mv">${m.t.toLocaleString()}</div><div class="mu">EUR &middot; ${m.ot} orders</div></div>
+    <div class="mc"><div class="ml">This week</div><div class="mv">${m.w.toLocaleString()}</div><div class="mu">EUR</div></div>
+    <div class="mc"><div class="ml">Avg check</div><div class="mv">${avg}</div><div class="mu">EUR &middot; ${m.oa} total</div></div>
+    <div class="mc ${upCnt>0?'danger':''}"><div class="ml">Unpaid</div><div class="mv">${upCnt}</div><div class="mu">${upTot.toLocaleString()} EUR outstanding</div></div>
+  </div>
+  <div class="grid2">
+    <div class="card">
+      <div class="ct">Sales by category</div>
+      <div class="legend">
+        <div class="li"><div class="ld" style="background:#378ADD"></div>Wine ${Math.round(cat.wine)} EUR</div>
+        <div class="li"><div class="ld" style="background:#534AB7"></div>Leg ${Math.round(cat.leg)} EUR</div>
+        <div class="li"><div class="ld" style="background:#1D9E75"></div>Boneless ${Math.round(cat.bon)} EUR</div>
+        <div class="li"><div class="ld" style="background:#B8973A"></div>Sliced ${Math.round(cat.sl)} EUR</div>
+        <div class="li"><div class="ld" style="background:#888780"></div>Caviar ${Math.round(cat.cav)} EUR</div>
+      </div>
+      <div class="chart-wrap"><canvas id="cc" role="img" aria-label="Sales by category">Sales chart.</canvas></div>
+    </div>
+    <div class="card">
+      <div class="ct">Stock levels</div>
+      ${stock.map(s=>`<div class="bar-wrap">
+        <div class="bar-label">${s.n} <span style="color:#999;font-size:11px">${s.t}</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${Math.round(s.q/maxQ*100)}%;background:${barColor(s)}"></div></div>
+        <div class="bar-qty">${s.q} ${s.u}${s.q<=3?' <span style="color:#EF9F27">&#9888;</span>':''}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:2rem">
+    <div class="ct">Unpaid orders</div>
+    <table>
+      <thead><tr><th>ID</th><th>Date</th><th>Client</th><th>Item</th><th style="text-align:right">EUR</th><th>Status</th></tr></thead>
+      <tbody>${unpaid.map(u=>`<tr>
+        <td style="color:#999">${u.id}</td>
+        <td style="color:#999;font-size:12px">${u.d}</td>
+        <td>${u.cl||'—'}</td>
+        <td>${u.it}</td>
+        <td style="text-align:right;font-weight:600">${u.am.toLocaleString()}</td>
+        <td><span class="badge ${u.st.includes('Paid')||u.st==='paid'?'bp':'bn'}">${u.st.includes('Paid')?'paid':u.st}</span></td>
+      </tr>`).join('')}</tbody>
+    </table>
+  </div>`;
+  if(cc)cc.destroy();
+  cc=new Chart(document.getElementById('cc'),{
+    type:'doughnut',
+    data:{labels:['Wine','Leg','Boneless','Sliced','Caviar'],datasets:[{data:[cat.wine,cat.leg,cat.bon,cat.sl,cat.cav],backgroundColor:['#378ADD','#534AB7','#1D9E75','#B8973A','#888780'],borderWidth:2,borderColor:'#fff'}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}
+  });
+}
+load();
+setInterval(load,5*60*1000);
+</script>
+</body>
+</html>
