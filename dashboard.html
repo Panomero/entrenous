@@ -7,12 +7,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#f8f7f5;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:#1a1a1a;min-height:100vh}
+body{background:#f8f7f5;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;color:#1a1a1a}
 .header{background:#080808;color:#f2f2f2;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
 .brand{font-family:Georgia,serif;font-size:1.4rem;font-style:italic;color:#D4AF6A}
 .sub{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:rgba(242,242,242,.45);margin-top:2px}
 .refresh-btn{background:rgba(184,151,58,.15);border:1px solid #B8973A;color:#D4AF6A;padding:5px 14px;border-radius:6px;font-size:11px;cursor:pointer}
-.refresh-btn:hover{background:rgba(184,151,58,.25)}
 .upd{font-size:11px;color:rgba(242,242,242,.35);margin-bottom:4px}
 .container{max-width:1200px;margin:0 auto;padding:2rem}
 .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:2rem}
@@ -26,14 +25,14 @@ body{background:#f8f7f5;font-family:-apple-system,BlinkMacSystemFont,'Inter',san
 .ct{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#6b6b6b;margin-bottom:1.25rem}
 .chart-wrap{position:relative;height:220px}
 table{width:100%;border-collapse:collapse;font-size:13px}
-th{text-align:left;padding:8px 12px;color:#6b6b6b;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.05em;border-bottom:1px solid rgba(0,0,0,.08)}
-td{padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.06);color:#1a1a1a}
+th{text-align:left;padding:8px 12px;color:#6b6b6b;font-weight:500;font-size:11px;text-transform:uppercase;border-bottom:1px solid rgba(0,0,0,.08)}
+td{padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.06)}
 tr:last-child td{border-bottom:none}
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:500}
 .bn{background:#FEF3C7;color:#B45309}
 .bp{background:#D1FAE5;color:#065F46}
 .bar-wrap{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.bar-label{font-size:12px;color:#1a1a1a;min-width:160px}
+.bar-label{font-size:12px;min-width:160px}
 .bar-bg{flex:1;height:8px;background:rgba(0,0,0,.08);border-radius:4px;overflow:hidden}
 .bar-fill{height:100%;border-radius:4px}
 .bar-qty{font-size:12px;color:#6b6b6b;min-width:70px;text-align:right}
@@ -41,7 +40,6 @@ tr:last-child td{border-bottom:none}
 .li{display:flex;align-items:center;gap:6px;font-size:12px;color:#6b6b6b}
 .ld{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 .loading{text-align:center;padding:4rem;color:#6b6b6b;font-size:14px}
-@media(max-width:768px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.container{padding:1rem}}
 </style>
 </head>
 <body>
@@ -53,38 +51,89 @@ tr:last-child td{border-bottom:none}
 <script>
 const SID='1kgIr-VSU2gXfrNjFTGBr3uzcpcnGQV21GcBQ8QP4Y6Y',GID='1754990298';
 let cc=null;
+
+function parseCSV(csv){
+  const lines=csv.split('\n');
+  const result=[];
+  for(let line of lines){
+    const row=[];
+    let inQ=false,cur='';
+    for(let ch of line){
+      if(ch==='"'){inQ=!inQ;}
+      else if(ch===','&&!inQ){row.push(cur.trim());cur='';}
+      else cur+=ch;
+    }
+    row.push(cur.trim());
+    result.push(row);
+  }
+  return result;
+}
+
 function load(){
   document.getElementById('upd').textContent='Updating...';
-  fetch(`https://docs.google.com/spreadsheets/d/${SID}/export?format=csv&gid=${GID}`)
-    .then(r=>r.text()).then(render).catch(()=>{
-      document.getElementById('app').innerHTML='<div class="loading">Error. Make sure the spreadsheet is public (Viewer access).</div>';
+  fetch(`https://docs.google.com/spreadsheets/d/${SID}/export?format=csv&gid=${GID}&t=${Date.now()}`)
+    .then(r=>r.text()).then(render).catch(e=>{
+      document.getElementById('app').innerHTML='<div class="loading">Error loading. Make sure the spreadsheet is public.</div>';
     });
 }
+
 function render(csv){
-  const rows=csv.split('\n').map(r=>r.split(',').map(c=>c.replace(/^"|"$/g,'').trim()));
-  let m={},cat={},stock=[],unpaid=[],sec='';
+  const rows=parseCSV(csv);
+  let m={t:0,w:0,mo:0,a:0,ot:0,oa:0};
+  let cat={wine:0,cav:0,leg:0,bon:0,sl:0};
+  let stock=[],unpaid=[];
+  let sec='';
+
   for(let i=0;i<rows.length;i++){
-    const r=rows[i],f=(r[0]||'').trim();
-    if(f.startsWith('updated:')){document.getElementById('upd').textContent='Updated: '+new Date(f.replace('updated:','')).toLocaleString('ru-RU');continue;}
-    if(['METRICS','rev_today','CATEGORIES','wine','name'].includes(f))continue;
+    const r=rows[i];
+    const f=(r[0]||'').trim();
+    if(!f)continue;
+
+    if(f.startsWith('updated:')){
+      try{document.getElementById('upd').textContent='Updated: '+new Date(f.replace('updated:','')).toLocaleString('ru-RU');}catch(e){}
+      continue;
+    }
     if(f==='STOCK'){sec='stock';continue;}
     if(f==='UNPAID'){sec='unpaid';continue;}
-    if(sec===''&&!isNaN(parseFloat(r[0]))&&r.length>=4&&!m.done){m={t:+r[0]||0,w:+r[1]||0,mo:+r[2]||0,a:+r[3]||0,ot:+r[4]||0,oa:+r[5]||0};continue;}
-    if(sec===''&&!isNaN(parseFloat(r[0]))&&m.t!==undefined&&!cat.done){cat={wine:+r[0]||0,cav:+r[1]||0,leg:+r[2]||0,bon:+r[3]||0,sl:+r[4]||0};cat.done=true;continue;}
-    if(sec==='stock'&&f&&!isNaN(parseFloat(r[2])))stock.push({n:r[0],t:r[1],q:+r[2],u:r[3],p:+r[4]||0});
-    if(sec==='unpaid'&&f&&r[1])unpaid.push({id:r[0],d:r[1],cl:r[2],it:r[3],am:+r[4]||0,st:r[5]});
+    if(f==='METRICS'||f==='CATEGORIES')continue;
+
+    if(sec===''&&f==='rev_today')continue;
+    if(sec===''&&f==='wine')continue;
+    if(sec==='stock'&&f==='name')continue;
+    if(sec==='unpaid'&&f==='id')continue;
+
+    if(sec===''){
+      const v0=parseFloat(f);
+      if(!isNaN(v0)&&r.length>=4){
+        if(m.oa===0&&r[4]!==undefined){
+          m={t:v0,w:parseFloat(r[1])||0,mo:parseFloat(r[2])||0,a:parseFloat(r[3])||0,ot:parseInt(r[4])||0,oa:parseInt(r[5])||0};
+        } else if(cat.wine===0){
+          cat={wine:v0,cav:parseFloat(r[1])||0,leg:parseFloat(r[2])||0,bon:parseFloat(r[3])||0,sl:parseFloat(r[4])||0};
+        }
+      }
+    }
+    if(sec==='stock'&&f){
+      const q=parseFloat(r[2]);
+      if(!isNaN(q))stock.push({n:r[0],t:r[1]||'',q,u:r[3]||'',p:parseFloat(r[4])||0});
+    }
+    if(sec==='unpaid'&&f&&r[1]){
+      unpaid.push({id:r[0],d:r[1],cl:r[2]||'',it:r[3]||'',am:parseFloat(r[4])||0,st:r[5]||'new'});
+    }
   }
+
   const upCnt=unpaid.filter(u=>u.st==='new').length;
   const upTot=unpaid.filter(u=>u.st==='new').reduce((s,u)=>s+u.am,0);
   const avg=m.oa>0?Math.round(m.a/m.oa):0;
   const maxQ=Math.max(...stock.map(s=>s.q),1);
-  const colors={'':'#378ADD','Красное':'#E24B4A','Белое':'#B5D4F4','Розовое':'#ED93B1','Шампанское':'#EF9F27','Оранжевое':'#EF9F27','Просекко':'#C0DD97','Caviar':'#888780','Jamon boneless':'#1D9E75','Jamon leg':'#534AB7','Jamon sliced':'#B8973A'};
-  function barColor(s){return colors[s.t]||colors[''];}
+
+  const typeColors={'Красное':'#E24B4A','Белое':'#85B7EB','Розовое':'#ED93B1','Шампанское':'#EF9F27','Оранжевое':'#EF9F27','Просекко':'#C0DD97','Caviar':'#888780','Jamon boneless':'#1D9E75','Jamon leg':'#534AB7','Jamon sliced':'#B8973A'};
+  function bcolor(s){return typeColors[s.t]||'#378ADD';}
+
   document.getElementById('app').innerHTML=`
   <div class="metrics">
     <div class="mc"><div class="ml">Revenue today</div><div class="mv">${m.t.toLocaleString()}</div><div class="mu">EUR &middot; ${m.ot} orders</div></div>
     <div class="mc"><div class="ml">This week</div><div class="mv">${m.w.toLocaleString()}</div><div class="mu">EUR</div></div>
-    <div class="mc"><div class="ml">Avg check</div><div class="mv">${avg}</div><div class="mu">EUR &middot; ${m.oa} total</div></div>
+    <div class="mc"><div class="ml">Avg check</div><div class="mv">${avg}</div><div class="mu">EUR &middot; ${m.oa} total orders</div></div>
     <div class="mc ${upCnt>0?'danger':''}"><div class="ml">Unpaid</div><div class="mv">${upCnt}</div><div class="mu">${upTot.toLocaleString()} EUR outstanding</div></div>
   </div>
   <div class="grid2">
@@ -103,8 +152,8 @@ function render(csv){
       <div class="ct">Stock levels</div>
       ${stock.map(s=>`<div class="bar-wrap">
         <div class="bar-label">${s.n} <span style="color:#999;font-size:11px">${s.t}</span></div>
-        <div class="bar-bg"><div class="bar-fill" style="width:${Math.round(s.q/maxQ*100)}%;background:${barColor(s)}"></div></div>
-        <div class="bar-qty">${s.q} ${s.u}${s.q<=3?' <span style="color:#EF9F27">&#9888;</span>':''}</div>
+        <div class="bar-bg"><div class="bar-fill" style="width:${Math.round(s.q/maxQ*100)}%;background:${bcolor(s)}"></div></div>
+        <div class="bar-qty">${s.q} ${s.u}${s.q<=3?' ⚠':''}</div>
       </div>`).join('')}
     </div>
   </div>
@@ -122,10 +171,14 @@ function render(csv){
       </tr>`).join('')}</tbody>
     </table>
   </div>`;
+
   if(cc)cc.destroy();
   cc=new Chart(document.getElementById('cc'),{
     type:'doughnut',
-    data:{labels:['Wine','Leg','Boneless','Sliced','Caviar'],datasets:[{data:[cat.wine,cat.leg,cat.bon,cat.sl,cat.cav],backgroundColor:['#378ADD','#534AB7','#1D9E75','#B8973A','#888780'],borderWidth:2,borderColor:'#fff'}]},
+    data:{
+      labels:['Wine','Leg','Boneless','Sliced','Caviar'],
+      datasets:[{data:[cat.wine,cat.leg,cat.bon,cat.sl,cat.cav],backgroundColor:['#378ADD','#534AB7','#1D9E75','#B8973A','#888780'],borderWidth:2,borderColor:'#fff'}]
+    },
     options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:false}}}
   });
 }
