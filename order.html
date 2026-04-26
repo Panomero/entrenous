@@ -126,7 +126,8 @@ async function placeOrder(wine, price) {
         <div class="success-sub">Check your bot chat — we will contact you shortly</div>
       </div>
     `;
-    setTimeout(() => tg.close(), 2500);
+    tg.openTelegramLink("https://t.me/entrenous_access_bot");
+    setTimeout(() => tg.close(), 500);
   } catch(e) {
     document.getElementById('app').innerHTML = `<div class="loading">Error. Please try again.</div>`;
   }
@@ -142,6 +143,7 @@ async function contactBot() {
       body: JSON.stringify({ action: 'browse', user_id })
     });
   } catch(e) {}
+  tg.openTelegramLink("https://t.me/entrenous_access_bot");
   tg.close();
 }
 
