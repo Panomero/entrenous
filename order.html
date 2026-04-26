@@ -36,6 +36,7 @@ tg.ready();
 tg.expand();
 
 const SOURCE_ID = '1W8VBEXEuL0HC3vJwxwAs05PhhMi3fdwads_GFKkUYic';
+const POSTS_GID = '850944697';
 const POSTS_GID = '0';
 
 const startParam = tg.initDataUnsafe?.start_param || new URLSearchParams(window.location.search).get('startapp') || new URLSearchParams(window.location.search).get('post_id') || '';
@@ -60,7 +61,7 @@ async function loadPost() {
     let post = null;
     for (const row of rows.slice(1)) {
       if (String(row[0]).trim() === String(postId).trim()) {
-        post = { id: row[0], date: row[1], channel: row[2], text: row[3] || '' };
+        post = { id: row[0], date: row[1], channel: row[2], text: row[3] || '', photo: row[4] || '' };
         break;
       }
     }
@@ -79,13 +80,13 @@ function showPost(post) {
   const body = lines.slice(1).filter(l => !l.includes('Available:') && !l.includes('@entrenous')).join('\n').trim();
 
   document.getElementById('app').innerHTML = `
-    <div class="content">
+    <div class="content">${post.photo ? `<img src="${post.photo}" style="width:100%;border-radius:12px;margin-bottom:1rem" onerror="this.style.display=none">` : ""}
       <div class="wine-title">${title}</div>
       ${avail ? `<div class="avail">${avail}</div>` : ''}
       ${price ? `<div class="wine-price">${price}</div>` : ''}
       <div class="divider"></div>
       <div class="wine-body">${body.replace(/\n/g,'<br>')}</div>
-      <button class="btn" onclick="placeOrder('${title.replace(/'/g,"\\'").replace(/"/g,'\\"')}', '${price}')">Place Order</button>
+      <button class="btn" onclick="placeOrder('${title.replace(/'/g,"\\'").replace(/"/g,'\\"')}', '${price}')">🛒 Place Order</button>
       <button class="btn btn-sec" onclick="tg.close()">Cancel</button>
     </div>
   `;
