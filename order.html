@@ -101,33 +101,48 @@ function showBrowse() {
   `;
 }
 
-function placeOrder(wine, price) {
+const API_URL = 'https://entre-nous-bot-production.up.railway.app';
+
+async function placeOrder(wine, price) {
   const user = tg.initDataUnsafe?.user;
+  const user_id = user?.id;
   const name = user ? (user.first_name + (user.last_name ? ' '+user.last_name : '')) : 'Client';
+  document.getElementById('app').innerHTML = `
+    <div class="success">
+      <div class="success-icon">🍷</div>
+      <div class="success-title">Processing...</div>
+    </div>
+  `;
   try {
-    tg.sendData(JSON.stringify({ action: 'order', wine, price, name }));
+    await fetch(API_URL + '/order', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ action: 'order', wine, price, name, user_id })
+    });
     document.getElementById('app').innerHTML = `
       <div class="success">
         <div class="success-icon">🍷</div>
         <div class="success-title">Order received!</div>
-        <div class="success-sub">We will contact you shortly</div>
+        <div class="success-sub">Check your bot chat — we will contact you shortly</div>
       </div>
     `;
-    setTimeout(() => tg.close(), 2000);
+    setTimeout(() => tg.close(), 2500);
   } catch(e) {
-    tg.openTelegramLink("https://t.me/entrenous_access_bot?start=order_" + encodeURIComponent(wine));
-    setTimeout(() => tg.close(), 300);
+    document.getElementById('app').innerHTML = `<div class="loading">Error. Please try again.</div>`;
   }
 }
 
-function contactBot() {
+async function contactBot() {
+  const user = tg.initDataUnsafe?.user;
+  const user_id = user?.id;
   try {
-    tg.sendData(JSON.stringify({ action: 'browse' }));
-    setTimeout(() => tg.close(), 300);
-  } catch(e) {
-    tg.openTelegramLink("https://t.me/entrenous_access_bot");
-    setTimeout(() => tg.close(), 300);
-  }
+    await fetch(API_URL + '/order', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ action: 'browse', user_id })
+    });
+  } catch(e) {}
+  setTimeout(() => tg.close(), 300);
 }
 
 loadPost();
