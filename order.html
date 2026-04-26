@@ -142,7 +142,7 @@ async function contactBot() {
       body: JSON.stringify({ action: 'browse', user_id })
     });
   } catch(e) {}
-  setTimeout(() => tg.close(), 300);
+  tg.close();
 }
 
 loadPost();
