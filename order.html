@@ -85,7 +85,7 @@ function showPost(post) {
   const avail = priceMatch ? `${priceMatch[1]} bottles` : '';
   const body = lines.slice(1).filter(l => !l.includes('Available:') && !l.includes('@entrenous')).join('\n').trim();
   const channel = post.channel === '@entrenousexclusive' ? 'Exclusive' : 'Best';
-  const photoSrc = post.photo ? (post.photo.startsWith('http') ? post.photo : `https://entre-nous-bot-production.up.railway.app/photo/${post.photo}`) : '';
+  const photoSrc = post.photo ? (post.photo.startsWith('http') ? post.photo : `https://entre-nous-bot-production.up.railway.app/photo?id=${encodeURIComponent(post.photo)}`) : '';
   const photoSection = photoSrc ? `<div class="hero"><img src="${photoSrc}" alt="${title}" onerror="this.parentElement.style.display='none'"><div class="hero-gradient"></div></div>` : '';
 
   document.getElementById('app').innerHTML = `
