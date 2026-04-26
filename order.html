@@ -102,22 +102,21 @@ function showBrowse() {
 }
 
 function placeOrder(wine, price) {
-  const user = tg.initDataUnsafe?.user;
-  const name = user ? (user.first_name + (user.last_name ? ' '+user.last_name : '')) : 'Client';
-  tg.sendData(JSON.stringify({ action: 'order', wine, price, name }));
   document.getElementById('app').innerHTML = `
     <div class="success">
       <div class="success-icon">🍷</div>
-      <div class="success-title">Order received!</div>
-      <div class="success-sub">We will contact you shortly in this chat</div>
+      <div class="success-title">Opening bot...</div>
     </div>
   `;
-  setTimeout(() => tg.close(), 2500);
+  const encoded = encodeURIComponent(wine);
+  setTimeout(() => {
+    tg.openTelegramLink("https://t.me/entrenous_access_bot?start=order_" + encoded);
+  }, 500);
 }
 
 function contactBot() {
-  tg.sendData(JSON.stringify({ action: 'browse' }));
-  setTimeout(() => tg.close(), 500);
+  tg.openTelegramLink("https://t.me/entrenous_access_bot");
+  setTimeout(() => tg.close(), 300);
 }
 
 loadPost();
