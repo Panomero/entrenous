@@ -3,28 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Entre Nous — Order</title>
+<title>Entre Nous</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--tg-theme-bg-color,#fff);color:var(--tg-theme-text-color,#1a1a1a);font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;min-height:100vh;padding:1.5rem}
-.brand{font-family:Georgia,serif;font-size:1.1rem;font-style:italic;color:#B8973A;margin-bottom:1.5rem;text-align:center}
-.card{background:var(--tg-theme-secondary-bg-color,#f8f7f5);border-radius:16px;padding:1.5rem;margin-bottom:1rem}
-.wine-name{font-size:1.3rem;font-weight:600;margin-bottom:0.5rem}
-.wine-meta{font-size:13px;color:var(--tg-theme-hint-color,#6b6b6b);margin-bottom:1rem}
-.wine-text{font-size:14px;line-height:1.7;margin-bottom:1.5rem;white-space:pre-wrap}
-.price{font-size:1.1rem;font-weight:600;color:#B8973A;margin-bottom:1rem}
-.btn{width:100%;padding:1rem;background:#B8973A;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:500;cursor:pointer;margin-bottom:0.75rem}
-.btn:active{opacity:0.85}
-.btn-sec{background:transparent;border:1px solid #B8973A;color:#B8973A}
-.loading{text-align:center;padding:3rem;color:var(--tg-theme-hint-color,#6b6b6b)}
-.success{text-align:center;padding:2rem}
+body{background:#0a0a0a;color:#f2f2f2;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;min-height:100vh}
+.header{padding:1.25rem 1.5rem 0.75rem;text-align:center}
+.brand{font-family:Georgia,serif;font-size:1.3rem;font-style:italic;color:#D4AF6A;letter-spacing:0.05em}
+.content{padding:1rem 1.25rem 2rem}
+.wine-title{font-size:1.4rem;font-weight:600;color:#f2f2f2;margin-bottom:0.5rem;line-height:1.3}
+.wine-price{font-size:1.1rem;color:#D4AF6A;font-weight:500;margin-bottom:1.25rem}
+.wine-body{font-size:14px;line-height:1.8;color:rgba(242,242,242,0.75);margin-bottom:1.5rem}
+.divider{height:1px;background:rgba(255,255,255,0.1);margin:1.25rem 0}
+.btn{width:100%;padding:1rem;background:#D4AF6A;color:#0a0a0a;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:0.02em}
+.btn:active{opacity:0.85;transform:scale(0.98)}
+.btn-sec{background:transparent;border:1px solid rgba(212,175,106,0.4);color:#D4AF6A;margin-top:0.75rem}
+.loading{text-align:center;padding:4rem 2rem;color:rgba(242,242,242,0.4);font-size:14px}
+.success{text-align:center;padding:3rem 2rem}
 .success-icon{font-size:3rem;margin-bottom:1rem}
+.success-title{font-size:1.2rem;font-weight:600;margin-bottom:0.5rem}
+.success-sub{font-size:13px;color:rgba(242,242,242,0.5)}
+.avail{display:inline-block;background:rgba(212,175,106,0.15);border:1px solid rgba(212,175,106,0.3);color:#D4AF6A;padding:4px 12px;border-radius:20px;font-size:12px;margin-bottom:1.25rem}
 </style>
 </head>
 <body>
-
-<div class="brand">Entre Nous</div>
+<div class="header"><div class="brand">Entre Nous</div></div>
 <div id="app"><div class="loading">Loading...</div></div>
 
 <script>
@@ -32,53 +35,57 @@ const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
 
-const SHEET_ID = '1kgIr-VSU2gXfrNjFTGBr3uzcpcnGQV21GcBQ8QP4Y6Y';
 const SOURCE_ID = '1W8VBEXEuL0HC3vJwxwAs05PhhMi3fdwads_GFKkUYic';
+const POSTS_GID = '0';
 
-// Get post_id from URL or start param
-const startParam = tg.initDataUnsafe?.start_param || '';
-const urlParams = new URLSearchParams(window.location.search);
-const postId = startParam || urlParams.get('post_id') || '';
+const startParam = tg.initDataUnsafe?.start_param || new URLSearchParams(window.location.search).get('startapp') || new URLSearchParams(window.location.search).get('post_id') || '';
+const postId = startParam;
 
 async function loadPost() {
-  if (!postId) {
-    showBrowse();
-    return;
-  }
+  if (!postId) { showBrowse(); return; }
   try {
-    const url = `https://docs.google.com/spreadsheets/d/${SOURCE_ID}/export?format=csv&gid=0&t=${Date.now()}`;
+    const url = `https://docs.google.com/spreadsheets/d/${SOURCE_ID}/export?format=csv&gid=${POSTS_GID}&t=${Date.now()}`;
     const res = await fetch(url);
     const csv = await res.text();
-    const rows = csv.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+    const rows = csv.split('\n').map(r => {
+      const cells = []; let inQ = false, cur = '';
+      for (const ch of r) {
+        if (ch === '"') inQ = !inQ;
+        else if (ch === ',' && !inQ) { cells.push(cur.trim()); cur = ''; }
+        else cur += ch;
+      }
+      cells.push(cur.trim());
+      return cells;
+    });
     let post = null;
     for (const row of rows.slice(1)) {
-      if (String(row[0]) === String(postId)) {
-        post = { id: row[0], date: row[1], channel: row[2], text: row[3] };
+      if (String(row[0]).trim() === String(postId).trim()) {
+        post = { id: row[0], date: row[1], channel: row[2], text: row[3] || '' };
         break;
       }
     }
-    if (post) showPost(post);
+    if (post && post.text) showPost(post);
     else showBrowse();
-  } catch(e) {
-    showBrowse();
-  }
+  } catch(e) { showBrowse(); }
 }
 
 function showPost(post) {
-  const lines = post.text.split('\n');
-  const title = lines[0].replace(/[*_]/g, '').trim();
-  const body = lines.slice(1).join('\n').trim();
-  const priceMatch = post.text.match(/Available:\s*(\d+)\s*btl\s*[··]\s*(\d+)\s*EUR/);
-  const price = priceMatch ? `${priceMatch[2]} EUR` : '';
+  const text = post.text;
+  const lines = text.split('\n').filter(l => l.trim());
+  const title = lines[0].replace(/[*_🍷🔴⚪🌸🍾🟡🫧]/g, '').trim();
+  const priceMatch = text.match(/Available:\s*(\d+)\s*btl\s*[·\u00b7]\s*(\d+)\s*EUR/);
+  const price = priceMatch ? `${priceMatch[2]} EUR per bottle` : '';
   const avail = priceMatch ? `${priceMatch[1]} bottles available` : '';
+  const body = lines.slice(1).filter(l => !l.includes('Available:') && !l.includes('@entrenous')).join('\n').trim();
 
   document.getElementById('app').innerHTML = `
-    <div class="card">
-      <div class="wine-name">${title}</div>
-      <div class="wine-meta">${avail}</div>
-      <div class="wine-text">${body}</div>
-      ${price ? `<div class="price">${price} per bottle</div>` : ''}
-      <button class="btn" onclick="placeOrder('${title.replace(/'/g,"\\'")}', '${price}')">🛒 Place Order</button>
+    <div class="content">
+      <div class="wine-title">${title}</div>
+      ${avail ? `<div class="avail">${avail}</div>` : ''}
+      ${price ? `<div class="wine-price">${price}</div>` : ''}
+      <div class="divider"></div>
+      <div class="wine-body">${body.replace(/\n/g,'<br>')}</div>
+      <button class="btn" onclick="placeOrder('${title.replace(/'/g,"\\'").replace(/"/g,'\\"')}', '${price}')">Place Order</button>
       <button class="btn btn-sec" onclick="tg.close()">Cancel</button>
     </div>
   `;
@@ -86,9 +93,9 @@ function showPost(post) {
 
 function showBrowse() {
   document.getElementById('app').innerHTML = `
-    <div class="card">
-      <div class="wine-name" style="margin-bottom:0.75rem">Welcome to Entre Nous</div>
-      <div class="wine-meta" style="margin-bottom:1rem">Private wine & delicacies selection</div>
+    <div class="content" style="padding-top:2rem">
+      <div class="wine-title" style="margin-bottom:0.75rem">Welcome to Entre Nous</div>
+      <div style="font-size:14px;color:rgba(242,242,242,0.5);margin-bottom:1.5rem">Private wine & delicacies selection. Browse our channels and tap Order on any post to get started.</div>
       <button class="btn" onclick="contactBot()">🛒 I want to order</button>
     </div>
   `;
@@ -96,16 +103,16 @@ function showBrowse() {
 
 function placeOrder(wine, price) {
   const user = tg.initDataUnsafe?.user;
-  const name = user ? (user.first_name + (user.last_name ? ' ' + user.last_name : '')) : 'Client';
+  const name = user ? (user.first_name + (user.last_name ? ' '+user.last_name : '')) : 'Client';
   tg.sendData(JSON.stringify({ action: 'order', wine, price, name }));
   document.getElementById('app').innerHTML = `
     <div class="success">
       <div class="success-icon">🍷</div>
-      <div style="font-size:1.1rem;font-weight:600;margin-bottom:0.5rem">Order received!</div>
-      <div style="color:var(--tg-theme-hint-color,#6b6b6b);font-size:14px">We will contact you shortly</div>
+      <div class="success-title">Order received!</div>
+      <div class="success-sub">We will contact you shortly in this chat</div>
     </div>
   `;
-  setTimeout(() => tg.close(), 2000);
+  setTimeout(() => tg.close(), 2500);
 }
 
 function contactBot() {
