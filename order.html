@@ -129,7 +129,7 @@ async function placeOrder(wine, price) {
     tg.openTelegramLink("https://t.me/entrenous_access_bot");
     setTimeout(() => tg.close(), 500);
   } catch(e) {
-    document.getElementById('app').innerHTML = `<div class="loading">Error. Please try again.</div>`;
+    document.getElementById('app').innerHTML = `<div class="loading">Error: ${e.message}</div>`;
   }
 }
 
