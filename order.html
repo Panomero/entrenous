@@ -8,37 +8,44 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0a0a0a;color:#f2f2f2;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;min-height:100vh}
-.header{padding:1.25rem 1.5rem 0.75rem;text-align:center}
-.brand{font-family:Georgia,serif;font-size:1.3rem;font-style:italic;color:#D4AF6A;letter-spacing:0.05em}
-.content{padding:1rem 1.25rem 2rem}
-.wine-title{font-size:1.4rem;font-weight:600;color:#f2f2f2;margin-bottom:0.5rem;line-height:1.3}
-.wine-price{font-size:1.1rem;color:#D4AF6A;font-weight:500;margin-bottom:1.25rem}
-.wine-body{font-size:14px;line-height:1.8;color:rgba(242,242,242,0.75);margin-bottom:1.5rem}
-.divider{height:1px;background:rgba(255,255,255,0.1);margin:1.25rem 0}
-.btn{width:100%;padding:1rem;background:#D4AF6A;color:#0a0a0a;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;letter-spacing:0.02em}
-.btn:active{opacity:0.85;transform:scale(0.98)}
-.btn-sec{background:transparent;border:1px solid rgba(212,175,106,0.4);color:#D4AF6A;margin-top:0.75rem}
+.brand{text-align:center;padding:1.5rem 1rem 0.5rem;font-family:Georgia,serif;font-size:1.1rem;font-style:italic;color:#D4AF6A;letter-spacing:0.05em}
+.hero{position:relative;width:100%;height:280px;overflow:hidden;background:#111}
+.hero img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-gradient{position:absolute;bottom:0;left:0;right:0;height:120px;background:linear-gradient(transparent,#0a0a0a)}
+.content{padding:1.25rem 1.25rem 2rem}
+.wine-title{font-size:1.3rem;font-weight:600;color:#fff;line-height:1.3;margin-bottom:0.5rem}
+.wine-meta{display:flex;gap:12px;margin-bottom:1rem;flex-wrap:wrap}
+.badge{background:rgba(212,175,106,0.15);border:1px solid rgba(212,175,106,0.3);color:#D4AF6A;padding:3px 10px;border-radius:20px;font-size:12px}
+.price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:1rem}
+.price{font-size:1.4rem;font-weight:600;color:#D4AF6A}
+.price-sub{font-size:13px;color:rgba(242,242,242,0.5)}
+.divider{height:1px;background:rgba(255,255,255,0.08);margin:1rem 0}
+.wine-body{font-size:14px;line-height:1.75;color:rgba(242,242,242,0.7)}
+.actions{padding:1.25rem;padding-bottom:calc(1.25rem + env(safe-area-inset-bottom))}
+.btn{width:100%;padding:1rem;border-radius:14px;font-size:16px;font-weight:500;cursor:pointer;border:none;margin-bottom:0.75rem;transition:opacity 0.15s}
+.btn:active{opacity:0.8}
+.btn-primary{background:#D4AF6A;color:#0a0a0a}
+.btn-sec{background:transparent;border:1px solid rgba(212,175,106,0.4);color:#D4AF6A}
 .loading{text-align:center;padding:4rem 2rem;color:rgba(242,242,242,0.4);font-size:14px}
+.loading-brand{font-family:Georgia,serif;font-size:1.2rem;font-style:italic;color:#D4AF6A;margin-bottom:1rem}
 .success{text-align:center;padding:3rem 2rem}
 .success-icon{font-size:3rem;margin-bottom:1rem}
-.success-title{font-size:1.2rem;font-weight:600;margin-bottom:0.5rem}
-.success-sub{font-size:13px;color:rgba(242,242,242,0.5)}
-.avail{display:inline-block;background:rgba(212,175,106,0.15);border:1px solid rgba(212,175,106,0.3);color:#D4AF6A;padding:4px 12px;border-radius:20px;font-size:12px;margin-bottom:1.25rem}
+.success-title{font-size:1.2rem;font-weight:600;color:#fff;margin-bottom:0.5rem}
+.success-sub{font-size:14px;color:rgba(242,242,242,0.5)}
+.browse-content{padding:2rem 1.25rem}
+.browse-title{font-size:1.2rem;font-weight:600;color:#fff;margin-bottom:0.5rem}
+.browse-sub{font-size:14px;color:rgba(242,242,242,0.5);margin-bottom:2rem;line-height:1.6}
 </style>
 </head>
 <body>
-<div class="header"><div class="brand">Entre Nous</div></div>
-<div id="app"><div class="loading">Loading...</div></div>
-
+<div id="app"><div class="loading"><div class="loading-brand">Entre Nous</div>Loading...</div></div>
 <script>
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
-
+const API_URL = 'https://entre-nous-bot-production.up.railway.app';
 const SOURCE_ID = '1W8VBEXEuL0HC3vJwxwAs05PhhMi3fdwads_GFKkUYic';
 const POSTS_GID = '850944697';
-
-
 const startParam = tg.initDataUnsafe?.start_param || new URLSearchParams(window.location.search).get('startapp') || new URLSearchParams(window.location.search).get('post_id') || '';
 const postId = startParam;
 
@@ -51,12 +58,11 @@ async function loadPost() {
     const rows = csv.split('\n').map(r => {
       const cells = []; let inQ = false, cur = '';
       for (const ch of r) {
-        if (ch === '"') inQ = !inQ;
+        if (ch === '"') { inQ = !inQ; }
         else if (ch === ',' && !inQ) { cells.push(cur.trim()); cur = ''; }
         else cur += ch;
       }
-      cells.push(cur.trim());
-      return cells;
+      cells.push(cur.trim()); return cells;
     });
     let post = null;
     for (const row of rows.slice(1)) {
@@ -75,18 +81,27 @@ function showPost(post) {
   const lines = text.split('\n').filter(l => l.trim());
   const title = lines[0].replace(/[*_🍷🔴⚪🌸🍾🟡🫧]/g, '').trim();
   const priceMatch = text.match(/Available:\s*(\d+)\s*btl\s*[·\u00b7]\s*(\d+)\s*EUR/);
-  const price = priceMatch ? `${priceMatch[2]} EUR per bottle` : '';
-  const avail = priceMatch ? `${priceMatch[1]} bottles available` : '';
+  const price = priceMatch ? `${priceMatch[2]} EUR` : '';
+  const avail = priceMatch ? `${priceMatch[1]} bottles` : '';
   const body = lines.slice(1).filter(l => !l.includes('Available:') && !l.includes('@entrenous')).join('\n').trim();
+  const channel = post.channel === '@entrenousexclusive' ? 'Exclusive' : 'Best';
+  const photoSection = post.photo ? `<div class="hero"><img src="${post.photo}" alt="${title}" onerror="this.parentElement.style.display='none'"><div class="hero-gradient"></div></div>` : '';
 
   document.getElementById('app').innerHTML = `
-    <div class="content">${post.photo ? `<img src="${post.photo}" style="width:100%;border-radius:12px;margin-bottom:1rem" onerror="this.style.display=none">` : ""}
+    <div class="brand">Entre Nous</div>
+    ${photoSection}
+    <div class="content">
       <div class="wine-title">${title}</div>
-      ${avail ? `<div class="avail">${avail}</div>` : ''}
-      ${price ? `<div class="wine-price">${price}</div>` : ''}
+      <div class="wine-meta">
+        ${channel ? `<span class="badge">${channel}</span>` : ''}
+        ${avail ? `<span class="badge">${avail} available</span>` : ''}
+      </div>
+      ${price ? `<div class="price-row"><div class="price">${price}</div><div class="price-sub">per bottle</div></div>` : ''}
       <div class="divider"></div>
       <div class="wine-body">${body.replace(/\n/g,'<br>')}</div>
-      <button class="btn" onclick="placeOrder('${title.replace(/'/g,"\\'").replace(/"/g,'\\"')}', '${price}')">🛒 Place Order</button>
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" onclick="placeOrder('${title.replace(/'/g,"\\'").replace(/"/g,'\\"')}', '${price}')">🛒 Place Order</button>
       <button class="btn btn-sec" onclick="tg.close()">Cancel</button>
     </div>
   `;
@@ -94,15 +109,14 @@ function showPost(post) {
 
 function showBrowse() {
   document.getElementById('app').innerHTML = `
-    <div class="content" style="padding-top:2rem">
-      <div class="wine-title" style="margin-bottom:0.75rem">Welcome to Entre Nous</div>
-      <div style="font-size:14px;color:rgba(242,242,242,0.5);margin-bottom:1.5rem">Private wine & delicacies selection. Browse our channels and tap Order on any post to get started.</div>
-      <button class="btn" onclick="placeOrder('General inquiry', '')">🛒 I want to order</button>
+    <div class="brand">Entre Nous</div>
+    <div class="browse-content">
+      <div class="browse-title">Welcome to Entre Nous</div>
+      <div class="browse-sub">Private wine & delicacies selection. Browse our channels and tap Order on any post to get started.</div>
+      <button class="btn btn-primary" onclick="placeOrder('General inquiry', '')">🛒 I want to order</button>
     </div>
   `;
 }
-
-const API_URL = 'https://entre-nous-bot-production.up.railway.app';
 
 async function placeOrder(wine, price) {
   const user = tg.initDataUnsafe?.user;
@@ -128,26 +142,11 @@ async function placeOrder(wine, price) {
       </div>
     `;
     tg.openTelegramLink("https://t.me/entrenous_access_bot");
-    setTimeout(() => tg.close(), 500);
+    setTimeout(() => tg.close(), 1500);
   } catch(e) {
-    document.getElementById('app').innerHTML = `<div class="loading">Error: ${e.message}</div>`;
+    document.getElementById('app').innerHTML = `<div class="loading"><div class="loading-brand">Entre Nous</div>Error. Please try again.</div>`;
   }
 }
-
-async function contactBot() {
-  const user = tg.initDataUnsafe?.user;
-  const user_id = user?.id;
-  try {
-    await fetch(API_URL + '/order', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ action: 'browse', user_id })
-    });
-  } catch(e) {}
-  tg.openTelegramLink("https://t.me/entrenous_access_bot");
-  tg.close();
-}
-
 loadPost();
 </script>
 </body>
