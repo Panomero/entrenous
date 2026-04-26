@@ -102,21 +102,32 @@ function showBrowse() {
 }
 
 function placeOrder(wine, price) {
-  document.getElementById('app').innerHTML = `
-    <div class="success">
-      <div class="success-icon">🍷</div>
-      <div class="success-title">Opening bot...</div>
-    </div>
-  `;
-  const encoded = encodeURIComponent(wine);
-  setTimeout(() => {
-    tg.openTelegramLink("https://t.me/entrenous_access_bot?start=order_" + encoded);
-  }, 500);
+  const user = tg.initDataUnsafe?.user;
+  const name = user ? (user.first_name + (user.last_name ? ' '+user.last_name : '')) : 'Client';
+  try {
+    tg.sendData(JSON.stringify({ action: 'order', wine, price, name }));
+    document.getElementById('app').innerHTML = `
+      <div class="success">
+        <div class="success-icon">🍷</div>
+        <div class="success-title">Order received!</div>
+        <div class="success-sub">We will contact you shortly</div>
+      </div>
+    `;
+    setTimeout(() => tg.close(), 2000);
+  } catch(e) {
+    tg.openTelegramLink("https://t.me/entrenous_access_bot?start=order_" + encodeURIComponent(wine));
+    setTimeout(() => tg.close(), 300);
+  }
 }
 
 function contactBot() {
-  tg.openTelegramLink("https://t.me/entrenous_access_bot");
-  setTimeout(() => tg.close(), 300);
+  try {
+    tg.sendData(JSON.stringify({ action: 'browse' }));
+    setTimeout(() => tg.close(), 300);
+  } catch(e) {
+    tg.openTelegramLink("https://t.me/entrenous_access_bot");
+    setTimeout(() => tg.close(), 300);
+  }
 }
 
 loadPost();
