@@ -133,7 +133,7 @@ async function placeOrder(wine, price) {
     await fetch(API_URL + '/order', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ action: 'order', wine, price, name, user_id })
+      body: JSON.stringify({ action: 'order', wine, price, name, user_id, lang_code: navigator.language || "en" })
     });
     document.getElementById('app').innerHTML = `
       <div class="success">
