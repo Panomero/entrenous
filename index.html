@@ -176,6 +176,20 @@ function setLang(l) {
   sessionStorage.setItem('lang',l);
 }
 var sl=sessionStorage.getItem('lang'); if(sl) setLang(sl);
+
+// Read ref param and store
+var urlParams = new URLSearchParams(window.location.search);
+var refCode = urlParams.get('ref');
+if (refCode) sessionStorage.setItem('ref', refCode);
+var storedRef = sessionStorage.getItem('ref');
+
+// Inject ref into Telegram bot link
+if (storedRef) {
+  var botLinks = document.querySelectorAll('a[href*="entrenous_access_bot"]');
+  botLinks.forEach(function(link) {
+    link.href = 'https://t.me/entrenous_access_bot?start=ref_' + storedRef;
+  });
+}
 </script>
 </body>
 </html>
