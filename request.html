@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Entre Nous — Wine Request</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#f2f2f2;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+
+.brand{text-align:center;padding:1.5rem 1rem 0.5rem;font-family:Georgia,serif;font-size:1.1rem;font-style:italic;color:#D4AF6A;letter-spacing:0.05em}
+
+.hero{position:relative;width:100%;height:260px;overflow:hidden;background:#111}
+.hero-bg{width:100%;height:100%;object-fit:cover;display:block;filter:brightness(0.6)}
+.hero-gradient{position:absolute;bottom:0;left:0;right:0;height:140px;background:linear-gradient(transparent,#0a0a0a)}
+.hero-overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(212,175,106,0.08) 0%,transparent 70%)}
+
+.content{padding:1.5rem 1.25rem 1rem}
+
+.eyebrow{font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#D4AF6A;margin-bottom:0.75rem;opacity:0.8}
+
+.headline{font-family:Georgia,serif;font-size:1.5rem;font-weight:400;color:#fff;line-height:1.4;margin-bottom:1rem}
+
+.divider{height:1px;background:rgba(212,175,106,0.2);margin:1.25rem 0}
+
+.body-text{font-size:14px;line-height:1.85;color:rgba(242,242,242,0.6)}
+
+.promise{margin-top:1.25rem;display:flex;gap:0.75rem;align-items:flex-start}
+.promise-icon{font-size:1.1rem;flex-shrink:0;margin-top:2px}
+.promise-text{font-size:13px;color:rgba(242,242,242,0.5);line-height:1.6}
+
+.actions{padding:1.5rem 1.25rem;padding-bottom:calc(1.5rem + env(safe-area-inset-bottom))}
+
+.btn{width:100%;padding:1rem 1.5rem;border-radius:14px;font-size:16px;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:0.5rem}
+.btn:active{transform:scale(0.98)}
+.btn-primary{background:#D4AF6A;color:#0a0a0a;margin-bottom:0.75rem}
+.btn-primary:hover{background:#e0bb78}
+
+.fine-print{text-align:center;font-size:11px;color:rgba(242,242,242,0.25);margin-top:0.5rem;line-height:1.6}
+
+/* Animated particles */
+.particles{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.particle{position:absolute;width:1px;height:1px;background:#D4AF6A;border-radius:50%;opacity:0;animation:float linear infinite}
+@keyframes float{
+  0%{transform:translateY(100vh) scale(0);opacity:0}
+  10%{opacity:0.4}
+  90%{opacity:0.1}
+  100%{transform:translateY(-20px) scale(1);opacity:0}
+}
+
+.page{position:relative;z-index:1}
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<div class="page">
+  <div class="brand">Entre Nous</div>
+
+  <div class="hero">
+    <div style="width:100%;height:100%;background:linear-gradient(135deg,#1a1208 0%,#0d0d0d 40%,#0a0f1a 100%);display:flex;align-items:center;justify-content:center">
+      <div style="text-align:center;opacity:0.15">
+        <div style="font-size:5rem">🍷</div>
+      </div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-gradient"></div>
+  </div>
+
+  <div class="content">
+    <div class="eyebrow">Private Wine Sourcing</div>
+    <div class="headline" id="headline">Is there something you've been searching for?</div>
+    <div class="divider"></div>
+    <div class="body-text" id="body">
+      Every week we're working on the next collection. Some wines take months to find. Some arrive once and never again.<br><br>
+      A producer, a region, a vintage — tell us what you're looking for and we'll do our best to find it.
+    </div>
+
+    <div class="promise">
+      <div class="promise-icon">🔍</div>
+      <div class="promise-text">We source across Europe and beyond. If it exists, we'll try to find it.</div>
+    </div>
+    <div class="promise">
+      <div class="promise-icon">✉️</div>
+      <div class="promise-text">We respond to every request personally.</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-primary" id="requestBtn" onclick="openBot()">
+      🍷 Let us know
+    </button>
+    <div class="fine-print">Opens a private conversation with our team</div>
+  </div>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+
+// Detect language
+const lang = tg.initDataUnsafe?.user?.language_code || 'en';
+
+const translations = {
+  ru: {
+    headline: "Ищете что-то особенное?",
+    body: "Каждую неделю мы работаем над новой коллекцией. Некоторые вина находятся месяцами. Некоторые появляются однажды и больше не возвращаются.<br><br>Производитель, регион, винтаж — расскажите нам, что вы ищете, и мы постараемся найти.",
+    promise1: "Мы ищем по всей Европе и не только. Если оно существует — мы постараемся его найти.",
+    promise2: "Мы отвечаем на каждый запрос лично.",
+    btn: "🍷 Написать нам",
+    fine: "Откроет личный чат с нашей командой"
+  },
+  fr: {
+    headline: "Vous cherchez quelque chose de particulier?",
+    body: "Chaque semaine, nous travaillons sur la prochaine collection. Certains vins prennent des mois à trouver. Certains arrivent une fois et ne reviennent jamais.<br><br>Un producteur, une région, un millésime — dites-nous ce que vous cherchez.",
+    promise1: "Nous cherchons partout en Europe et au-delà. S'il existe, nous essaierons de le trouver.",
+    promise2: "Nous répondons à chaque demande personnellement.",
+    btn: "🍷 Nous contacter",
+    fine: "Ouvre une conversation privée avec notre équipe"
+  }
+};
+
+const t = translations[lang] || null;
+if (t) {
+  document.getElementById('headline').textContent = t.headline;
+  document.getElementById('body').innerHTML = t.body;
+  document.getElementById('requestBtn').textContent = t.btn;
+  document.querySelector('.fine-print').textContent = t.fine;
+  document.querySelectorAll('.promise-text')[0].textContent = t.promise1;
+  document.querySelectorAll('.promise-text')[1].textContent = t.promise2;
+}
+
+function openBot() {
+  tg.close();
+  setTimeout(() => {
+    tg.openTelegramLink('https://t.me/entrenous_access_bot?start=wine_request');
+  }, 100);
+}
+
+// Particles
+const container = document.getElementById('particles');
+for (let i = 0; i < 12; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.animationDuration = (8 + Math.random() * 12) + 's';
+  p.style.animationDelay = (Math.random() * 10) + 's';
+  p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+  container.appendChild(p);
+}
+</script>
+</body>
+</html>
