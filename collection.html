@@ -104,8 +104,7 @@ function render(postText,wines){
     const instock=(w.available||'yes')==='yes';
     const delivery=w.delivery||(instock?t.immediately:'1-2 weeks');
     return `<tr onclick="openSheet(${i})">
-      <td><div class="wine-name">${esc(w.name||'—')}</div><div class="wine-type">${esc(w.type||'')}</div></td>
-      <td><span class="badge ${instock?'badge-yes':'badge-no'}">${instock?t.instock:t.preorder}</span></td>
+      <td><div class="wine-name">${esc(w.name||'—')}</div><div class="wine-type">${esc(w.type||'')} · <span class="${instock?'badge-yes':'badge-no'}" style="font-size:10px">${instock?t.instock:t.preorder}</span></div></td>
       <td><div class="delivery-text">${esc(delivery)}</div></td>
       <td><div class="qty-text">${w.quantity||'—'}</div></td>
       <td><div class="price-text">${w.price?w.price+' €':'—'}</div></td>
@@ -117,7 +116,7 @@ function render(postText,wines){
     ${postText?`<div class="intro"><div class="intro-text">${esc(postText).replace(/\n/g,'<br>')}</div></div>`:''}
     <div class="section-label">${t.wines}</div>
     <div class="table-wrap"><table>
-      <thead><tr><th>Wine</th><th></th><th>${t.delivery}</th><th>${t.quantity}</th><th>Price</th><th></th></tr></thead>
+      <thead><tr><th>Wine</th><th>${t.delivery}</th><th>${t.quantity}</th><th>Price</th><th></th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>`;
 }
