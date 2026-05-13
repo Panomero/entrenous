@@ -144,7 +144,10 @@ async function placeOrder(wine,price){
   const name=user?(user.first_name+(user.last_name?' '+user.last_name:'')):'Client';
   document.getElementById('app').innerHTML=`<div class="success"><div class="success-icon">⏳</div><div class="success-title">Processing...</div></div>`;
   try{
-    await fetch(API_URL+'/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'order',wine,price,name,user_id,lang_code:lang})});
+    const instock_flag = winesData.find(w=>w.name===wine)?.available === 'yes';
+    const delivery_info = winesData.find(w=>w.name===wine)?.delivery || '';
+    const collection_context = instock_flag ? `Available immediately. Delivery: ${delivery_info}` : `Pre-order wine. Delivery: ${delivery_info}. Not in stock yet but client can pre-order.`;
+    await fetch(API_URL+'/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'order',wine,price,name,user_id,lang_code:lang,collection_context})});
     document.getElementById('app').innerHTML=`<div class="success"><div class="success-icon">🍷</div><div class="success-title">${t.successTitle}</div><div class="success-sub">${t.successSub}</div></div>`;
     tg.openTelegramLink('https://t.me/entrenous_access_bot');
     setTimeout(()=>tg.close(),1800);
