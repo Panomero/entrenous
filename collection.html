@@ -104,7 +104,7 @@ function render(postText,wines){
     const instock=(w.available||'yes')==='yes';
     const delivery=w.delivery||(instock?t.immediately:'1-2 weeks');
     return `<tr onclick="openSheet(${i})">
-      <td><div class="wine-name">${esc(w.name||'—')}</div><div class="wine-type">${esc(w.type||'')} · <span class="${instock?'badge-yes':'badge-no'}" style="font-size:10px">${instock?t.instock:t.preorder}</span></div></td>
+      <td><div class="wine-name">${esc(w.name||'—')}</div><div class="wine-type">${esc(w.type||'')}</div><span class="badge ${instock?'badge-yes':'badge-no'}" style="margin-top:4px;display:inline-block">${instock?t.instock:t.preorder}</span></td>
       <td><div class="delivery-text">${esc(delivery)}</div></td>
       <td><div class="qty-text">${w.quantity||'—'}</div></td>
       <td><div class="price-text">${w.price?w.price+' €':'—'}</div></td>
