@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Collection Editor</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0a;color:#f2f2f2;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;min-height:100vh;padding-bottom:100px}
+.header{padding:1rem 1.25rem 0.75rem;border-bottom:1px solid rgba(255,255,255,0.06)}
+.header-brand{font-family:Georgia,serif;font-size:0.9rem;font-style:italic;color:#D4AF6A;margin-bottom:0.25rem}
+.header-title{font-size:1rem;font-weight:600;color:#fff}
+.header-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px}
+
+.wines-list{padding:0.75rem 1rem}
+.wine-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:0.875rem;margin-bottom:0.75rem;position:relative}
+.wine-card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem}
+.wine-num{font-size:11px;color:#D4AF6A;font-weight:600;letter-spacing:0.05em}
+.delete-btn{background:rgba(255,60,60,0.15);border:1px solid rgba(255,60,60,0.3);color:#ff6b6b;border-radius:8px;padding:3px 10px;font-size:12px;cursor:pointer}
+.delete-btn:active{opacity:0.7}
+
+.field{margin-bottom:0.625rem}
+.field-label{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.06em}
+.field input, .field select{width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 10px;color:#f2f2f2;font-size:14px;outline:none;-webkit-appearance:none}
+.field input:focus, .field select:focus{border-color:rgba(212,175,106,0.5);background:rgba(212,175,106,0.05)}
+.field select option{background:#1a1a1a;color:#f2f2f2}
+
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem}
+
+.avail-toggle{display:flex;gap:0.5rem}
+.avail-btn{flex:1;padding:7px;border-radius:8px;font-size:13px;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:transparent;color:rgba(255,255,255,0.5);transition:all 0.15s}
+.avail-btn.active-yes{background:rgba(80,200,100,0.15);border-color:rgba(80,200,100,0.4);color:#6ddb8a}
+.avail-btn.active-no{background:rgba(212,175,106,0.15);border-color:rgba(212,175,106,0.4);color:#D4AF6A}
+
+.add-btn{display:flex;align-items:center;justify-content:center;gap:0.5rem;width:100%;padding:0.875rem;background:rgba(212,175,106,0.08);border:1px dashed rgba(212,175,106,0.3);border-radius:12px;color:#D4AF6A;font-size:14px;cursor:pointer;margin-bottom:0.75rem}
+.add-btn:active{opacity:0.7}
+
+.footer{position:fixed;bottom:0;left:0;right:0;padding:0.875rem 1rem;padding-bottom:calc(0.875rem + env(safe-area-inset-bottom));background:rgba(10,10,10,0.95);border-top:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(10px)}
+.save-btn{width:100%;padding:0.9rem;background:#D4AF6A;color:#0a0a0a;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity 0.15s}
+.save-btn:active{opacity:0.8}
+.save-btn:disabled{opacity:0.4}
+
+.toast{position:fixed;top:1rem;left:50%;transform:translateX(-50%);background:#1a1a1a;border:1px solid rgba(212,175,106,0.3);color:#D4AF6A;padding:0.6rem 1.25rem;border-radius:20px;font-size:13px;z-index:100;opacity:0;transition:opacity 0.3s;pointer-events:none}
+.toast.show{opacity:1}
+
+.loading{text-align:center;padding:3rem 1rem;color:rgba(255,255,255,0.3);font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="header">
+  <div class="header-brand">Entre Nous</div>
+  <div class="header-title">Collection Editor</div>
+  <div class="header-sub" id="post-label">Loading...</div>
+</div>
+
+<div id="app"><div class="loading">Loading wines...</div></div>
+
+<div class="footer">
+  <button class="save-btn" id="saveBtn" onclick="saveCollection()">Save Collection</button>
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
+
+const API_URL = 'https://entre-nous-bot-production.up.railway.app';
+const startParam = tg.initDataUnsafe?.start_param || new URLSearchParams(window.location.search).get('post_id') || '';
+const postId = startParam.replace('col_', '');
+
+let wines = [];
+
+const TYPES = ['Red', 'White', 'Rosé', 'Sparkling', 'Orange', 'Dessert', 'Other'];
+
+document.getElementById('post-label').textContent = postId ? `Post #${postId}` : 'No post selected';
+
+async function loadWines() {
+  if (!postId) {
+    wines = [];
+    render();
+    return;
+  }
+  try {
+    const res = await fetch(`${API_URL}/collection/load?post_id=${postId}`);
+    const data = await res.json();
+    wines = data.wines || [];
+    render();
+  } catch(e) {
+    wines = [];
+    render();
+  }
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (wines.length === 0) {
+    app.innerHTML = `
+      <div class="wines-list">
+        <div style="text-align:center;padding:2rem;color:rgba(255,255,255,0.25);font-size:14px">No wines added yet</div>
+        ${addBtnHtml()}
+      </div>`;
+  } else {
+    app.innerHTML = `<div class="wines-list">${wines.map((w,i) => wineCardHtml(w,i)).join('')}${addBtnHtml()}</div>`;
+  }
+  // Attach events
+  wines.forEach((w, i) => {
+    // Availability toggle
+    const yesBtn = document.getElementById(`avail-yes-${i}`);
+    const noBtn = document.getElementById(`avail-no-${i}`);
+    if (yesBtn) yesBtn.onclick = () => setAvail(i, 'yes');
+    if (noBtn) noBtn.onclick = () => setAvail(i, 'no');
+    // Input changes
+    ['name','type','delivery','quantity','price'].forEach(field => {
+      const el = document.getElementById(`${field}-${i}`);
+      if (el) el.oninput = () => { wines[i][field] = el.value; };
+      if (el && el.tagName === 'SELECT') el.onchange = () => { wines[i][field] = el.value; };
+    });
+  });
+}
+
+function wineCardHtml(w, i) {
+  const isYes = (w.available || 'yes') === 'yes';
+  return `
+  <div class="wine-card">
+    <div class="wine-card-header">
+      <div class="wine-num">WINE ${i+1}</div>
+      <button class="delete-btn" onclick="deleteWine(${i})">✕ Remove</button>
+    </div>
+    <div class="field">
+      <div class="field-label">Name</div>
+      <input id="name-${i}" type="text" value="${esc(w.name||'')}" placeholder="e.g. Châteauneuf-du-Pape 2022">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Type</div>
+        <select id="type-${i}">
+          ${TYPES.map(t => `<option value="${t}" ${w.type===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <div class="field-label">Price (EUR)</div>
+        <input id="price-${i}" type="number" value="${esc(w.price||'')}" placeholder="85">
+      </div>
+    </div>
+    <div class="field">
+      <div class="field-label">Availability</div>
+      <div class="avail-toggle">
+        <button class="avail-btn ${isYes?'active-yes':''}" id="avail-yes-${i}">✓ In stock</button>
+        <button class="avail-btn ${!isYes?'active-no':''}" id="avail-no-${i}">⏳ Pre-order</button>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <div class="field-label">Delivery</div>
+        <input id="delivery-${i}" type="text" value="${esc(w.delivery||'')}" placeholder="${isYes?'Available immediately':'e.g. 1-2 weeks'}">
+      </div>
+      <div class="field">
+        <div class="field-label">Quantity (btl)</div>
+        <input id="quantity-${i}" type="number" value="${esc(w.quantity||'')}" placeholder="12">
+      </div>
+    </div>
+  </div>`;
+}
+
+function addBtnHtml() {
+  return `<div class="add-btn" onclick="addWine()">+ Add wine</div>`;
+}
+
+function esc(s) {
+  return String(s).replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function setAvail(i, val) {
+  wines[i].available = val;
+  render();
+}
+
+function addWine() {
+  wines.push({name:'', type:'Red', available:'yes', delivery:'', quantity:'', price:''});
+  render();
+  setTimeout(() => {
+    const cards = document.querySelectorAll('.wine-card');
+    if (cards.length) cards[cards.length-1].scrollIntoView({behavior:'smooth'});
+  }, 100);
+}
+
+function deleteWine(i) {
+  wines.splice(i, 1);
+  render();
+}
+
+async function saveCollection() {
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  // Sync all inputs
+  wines.forEach((w, i) => {
+    ['name','type','delivery','quantity','price'].forEach(field => {
+      const el = document.getElementById(`${field}-${i}`);
+      if (el) w[field] = el.value;
+    });
+  });
+  try {
+    const res = await fetch(`${API_URL}/collection/save`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({post_id: postId, wines})
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast('✓ Saved!');
+      setTimeout(() => tg.close(), 1200);
+    } else {
+      showToast('Error: ' + data.error);
+    }
+  } catch(e) {
+    showToast('Connection error');
+  }
+  btn.disabled = false;
+  btn.textContent = 'Save Collection';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+loadWines();
+</script>
+</body>
+</html>
