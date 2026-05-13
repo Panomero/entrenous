@@ -77,7 +77,7 @@ tg.expand();
 const API_URL = 'https://entre-nous-bot-production.up.railway.app';
 const lang = tg.initDataUnsafe?.user?.language_code || 'en';
 const startParam = tg.initDataUnsafe?.start_param || new URLSearchParams(window.location.search).get('startapp') || '';
-const postId = startParam.replace('col_', '');
+const postId = (startParam.replace('col_', '')) || new URLSearchParams(window.location.search).get('post_id') || '';
 
 const T = {
   ru: {
