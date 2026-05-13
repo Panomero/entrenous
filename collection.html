@@ -8,249 +8,159 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#0a0a0a;color:#f2f2f2;font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;min-height:100vh;padding-bottom:2rem}
-
 .header{padding:1.25rem 1.25rem 0.75rem;text-align:center;border-bottom:1px solid rgba(255,255,255,0.06)}
 .brand{font-family:Georgia,serif;font-size:1rem;font-style:italic;color:#D4AF6A;letter-spacing:0.05em}
 .header-sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:4px;text-transform:uppercase;letter-spacing:0.1em}
-
-.intro{padding:1.25rem 1.25rem 0.5rem}
-.intro-text{font-size:14px;line-height:1.75;color:rgba(242,242,242,0.6)}
-
-.section-label{padding:0.75rem 1.25rem 0.5rem;font-size:11px;color:#D4AF6A;text-transform:uppercase;letter-spacing:0.1em;font-weight:600}
-
-.wines{padding:0 1rem}
-
-.wine-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:16px;margin-bottom:0.75rem;overflow:hidden;transition:border-color 0.2s}
-.wine-card:active{border-color:rgba(212,175,106,0.3)}
-
-.wine-body{padding:1rem 1rem 0.75rem}
-.wine-name{font-size:1rem;font-weight:600;color:#fff;line-height:1.3;margin-bottom:0.5rem}
-
-.wine-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:0.75rem}
-.tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
-.tag-type{background:rgba(212,175,106,0.12);border:1px solid rgba(212,175,106,0.25);color:#D4AF6A}
-.tag-instock{background:rgba(80,200,100,0.1);border:1px solid rgba(80,200,100,0.25);color:#6ddb8a}
-.tag-preorder{background:rgba(212,175,106,0.1);border:1px solid rgba(212,175,106,0.25);color:#D4AF6A}
-
-.wine-details{display:flex;gap:1rem;margin-bottom:0.875rem}
-.detail{flex:1}
-.detail-label{font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:3px}
-.detail-val{font-size:13px;color:rgba(255,255,255,0.8)}
-
-.wine-footer{display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1rem;border-top:1px solid rgba(255,255,255,0.05);background:rgba(255,255,255,0.02)}
-.price{font-size:1.1rem;font-weight:700;color:#D4AF6A}
-.price-sub{font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px}
-.order-btn{background:#D4AF6A;color:#0a0a0a;border:none;border-radius:10px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.15s}
-.order-btn:active{opacity:0.8}
-
+.intro{padding:1rem 1.25rem 0.75rem}
+.intro-text{font-size:13px;line-height:1.7;color:rgba(242,242,242,0.5)}
+.section-label{padding:0.75rem 1.25rem 0.5rem;font-size:10px;color:#D4AF6A;text-transform:uppercase;letter-spacing:0.12em;font-weight:600}
+.table-wrap{overflow-x:auto;padding:0 0.75rem}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead tr{border-bottom:1px solid rgba(212,175,106,0.2)}
+thead th{padding:0.5rem 0.5rem;text-align:left;font-size:10px;color:rgba(212,175,106,0.7);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap}
+tbody tr{border-bottom:1px solid rgba(255,255,255,0.05);transition:background 0.15s;cursor:pointer}
+tbody tr:active{background:rgba(212,175,106,0.05)}
+tbody td{padding:0.625rem 0.5rem;vertical-align:middle}
+.wine-name{font-weight:500;color:#fff;line-height:1.3}
+.wine-type{font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;white-space:nowrap}
+.badge-yes{background:rgba(80,200,100,0.12);border:1px solid rgba(80,200,100,0.25);color:#6ddb8a}
+.badge-no{background:rgba(212,175,106,0.1);border:1px solid rgba(212,175,106,0.25);color:#D4AF6A}
+.delivery-text{font-size:12px;color:rgba(255,255,255,0.5);white-space:nowrap}
+.qty-text{font-size:12px;color:rgba(255,255,255,0.6);white-space:nowrap}
+.price-text{font-size:13px;font-weight:600;color:#D4AF6A;white-space:nowrap}
+.order-btn{background:#D4AF6A;color:#0a0a0a;border:none;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.order-btn:active{opacity:0.7}
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10;opacity:0;transition:opacity 0.25s;pointer-events:none}
+.sheet-overlay.open{opacity:1;pointer-events:all}
+.sheet{position:fixed;bottom:0;left:0;right:0;background:#141414;border-radius:20px 20px 0 0;padding:1.5rem 1.25rem;padding-bottom:calc(1.5rem + env(safe-area-inset-bottom));z-index:11;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+.sheet.open{transform:translateY(0)}
+.sheet-handle{width:36px;height:4px;background:rgba(255,255,255,0.15);border-radius:2px;margin:0 auto 1.25rem}
+.sheet-name{font-size:1.1rem;font-weight:600;color:#fff;margin-bottom:0.25rem}
+.sheet-type{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:1rem}
+.sheet-row{display:flex;justify-content:space-between;padding:0.5rem 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sheet-row:last-of-type{border-bottom:none;margin-bottom:1rem}
+.sheet-label{font-size:12px;color:rgba(255,255,255,0.4)}
+.sheet-val{font-size:12px;color:#fff;font-weight:500}
+.sheet-price{font-size:1.4rem;font-weight:700;color:#D4AF6A;margin-bottom:1rem}
+.sheet-order-btn{width:100%;padding:0.875rem;background:#D4AF6A;color:#0a0a0a;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer}
+.sheet-order-btn:active{opacity:0.8}
+.sheet-cancel{width:100%;padding:0.75rem;background:transparent;color:rgba(255,255,255,0.4);border:none;font-size:14px;cursor:pointer;margin-top:0.5rem}
 .loading{text-align:center;padding:4rem 2rem}
 .loading-brand{font-family:Georgia,serif;font-size:1.2rem;font-style:italic;color:#D4AF6A;margin-bottom:0.75rem}
 .loading-sub{font-size:13px;color:rgba(255,255,255,0.3)}
-
 .empty{text-align:center;padding:4rem 2rem}
 .empty-icon{font-size:2.5rem;margin-bottom:1rem;opacity:0.4}
 .empty-text{font-size:14px;color:rgba(255,255,255,0.3)}
-
 .success{text-align:center;padding:4rem 2rem}
 .success-icon{font-size:3rem;margin-bottom:1rem}
 .success-title{font-size:1.2rem;font-weight:600;color:#fff;margin-bottom:0.5rem}
 .success-sub{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.6}
-
-/* Divider line */
-.divider{height:1px;background:rgba(255,255,255,0.06);margin:0.25rem 1.25rem}
 </style>
 </head>
 <body>
-
-<div id="app">
-  <div class="loading">
-    <div class="loading-brand">Entre Nous</div>
-    <div class="loading-sub">Loading collection...</div>
-  </div>
-</div>
-
+<div class="sheet-overlay" id="overlay" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet"><div id="sheet-content"></div></div>
+<div id="app"><div class="loading"><div class="loading-brand">Entre Nous</div><div class="loading-sub">Loading collection...</div></div></div>
 <script>
-const tg = window.Telegram.WebApp;
-tg.ready();
-tg.expand();
-
-const API_URL = 'https://entre-nous-bot-production.up.railway.app';
-const lang = tg.initDataUnsafe?.user?.language_code || 'en';
-const startParam = tg.initDataUnsafe?.start_param || new URLSearchParams(window.location.search).get('startapp') || '';
-const postId = (startParam.replace('col_', '')) || new URLSearchParams(window.location.search).get('post_id') || '';
-
-const T = {
-  ru: {
-    subtitle: 'Коллекция',
-    instock: 'В наличии',
-    preorder: 'Предзаказ',
-    delivery: 'Доставка',
-    quantity: 'Количество',
-    bottles: 'бут.',
-    perBottle: 'за бутылку',
-    order: 'Заказать',
-    wines: 'Вина коллекции',
-    empty: 'Вина скоро появятся',
-    successTitle: 'Заявка принята!',
-    successSub: 'Откройте чат с нами — мы свяжемся в ближайшее время.',
-  },
-  fr: {
-    subtitle: 'Collection',
-    instock: 'En stock',
-    preorder: 'Pré-commande',
-    delivery: 'Livraison',
-    quantity: 'Quantité',
-    bottles: 'btl.',
-    perBottle: 'par bouteille',
-    order: 'Commander',
-    wines: 'Vins de la collection',
-    empty: 'Les vins arrivent bientôt',
-    successTitle: 'Demande reçue!',
-    successSub: 'Ouvrez notre chat — nous vous contacterons bientôt.',
-  },
-  en: {
-    subtitle: 'Collection',
-    instock: 'In stock',
-    preorder: 'Pre-order',
-    delivery: 'Delivery',
-    quantity: 'Available',
-    bottles: 'btl.',
-    perBottle: 'per bottle',
-    order: 'Order',
-    wines: 'Collection wines',
-    empty: 'Wines coming soon',
-    successTitle: 'Request received!',
-    successSub: 'Open our chat — we will get back to you shortly.',
-  }
+const tg=window.Telegram.WebApp;tg.ready();tg.expand();
+const API_URL='https://entre-nous-bot-production.up.railway.app';
+const lang=tg.initDataUnsafe?.user?.language_code||'en';
+const startParam=tg.initDataUnsafe?.start_param||new URLSearchParams(window.location.search).get('startapp')||'';
+const postId=(startParam.replace('col_',''))||new URLSearchParams(window.location.search).get('post_id')||'';
+const T={
+  ru:{subtitle:'Коллекция',instock:'В наличии',preorder:'Предзаказ',delivery:'Доставка',quantity:'Кол-во',order:'Заказать',wines:'Вина',empty:'Вина скоро появятся',successTitle:'Заявка принята!',successSub:'Откройте чат — мы свяжемся скоро.',cancel:'Закрыть',immediately:'Сразу'},
+  fr:{subtitle:'Collection',instock:'En stock',preorder:'Pré-cmd',delivery:'Livraison',quantity:'Qté',order:'Commander',wines:'Vins',empty:'Vins bientôt disponibles',successTitle:'Demande reçue!',successSub:'Ouvrez notre chat — nous vous contacterons.',cancel:'Fermer',immediately:'Immédiatement'},
+  en:{subtitle:'Collection',instock:'In stock',preorder:'Pre-order',delivery:'Delivery',quantity:'Qty',order:'Order',wines:'Wines',empty:'Wines coming soon',successTitle:'Request received!',successSub:'Open our chat — we will get back to you shortly.',cancel:'Close',immediately:'Immediately'},
 };
+const t=T[lang.startsWith('ru')?'ru':lang.startsWith('fr')?'fr':'en'];
+let winesData=[];
 
-const t = T[lang.startsWith('ru')?'ru':lang.startsWith('fr')?'fr':'en'];
-
-async function load() {
-  try {
-    // Load post text
-    const SOURCE_ID = '1W8VBEXEuL0HC3vJwxwAs05PhhMi3fdwads_GFKkUYic';
-    const POSTS_GID = '850944697';
-    let postText = '';
-    try {
-      const url = `https://docs.google.com/spreadsheets/d/${SOURCE_ID}/export?format=csv&gid=${POSTS_GID}&t=${Date.now()}`;
-      const res = await fetch(url);
-      const csv = await res.text();
-      const rows = csv.split('\n').map(r => {
-        const cells = []; let inQ = false, cur = '';
-        for (const ch of r) {
-          if (ch==='"'){inQ=!inQ;}
-          else if (ch===','&&!inQ){cells.push(cur.trim());cur='';}
-          else cur+=ch;
-        }
-        cells.push(cur.trim()); return cells;
-      });
-      for (const row of rows.slice(1)) {
-        if (String(row[0]).trim() === String(postId).trim()) {
-          postText = row[3] || '';
-          break;
-        }
-      }
-    } catch(e){}
-
-    // Load wines
-    const wRes = await fetch(`${API_URL}/collection/load?post_id=${postId}`);
-    const wData = await wRes.json();
-    const wines = wData.wines || [];
-
-    render(postText, wines);
-  } catch(e) {
-    render('', []);
-  }
+async function load(){
+  try{
+    let postText='';
+    try{
+      const SOURCE_ID='1W8VBEXEuL0HC3vJwxwAs05PhhMi3fdwads_GFKkUYic';
+      const POSTS_GID='850944697';
+      const res=await fetch(`https://docs.google.com/spreadsheets/d/${SOURCE_ID}/export?format=csv&gid=${POSTS_GID}&t=${Date.now()}`);
+      const csv=await res.text();
+      const rows=csv.split('\n').map(r=>{const cells=[];let inQ=false,cur='';for(const ch of r){if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}else cur+=ch;}cells.push(cur.trim());return cells;});
+      for(const row of rows.slice(1)){if(String(row[0]).trim()===String(postId).trim()){postText=row[3]||'';break;}}
+    }catch(e){}
+    const wRes=await fetch(`${API_URL}/collection/load?post_id=${postId}`);
+    const wData=await wRes.json();
+    winesData=wData.wines||[];
+    render(postText,winesData);
+  }catch(e){render('',[]); }
 }
 
-function render(postText, wines) {
-  const app = document.getElementById('app');
-
-  if (wines.length === 0) {
-    app.innerHTML = `
-      <div class="header"><div class="brand">Entre Nous</div><div class="header-sub">${t.subtitle}</div></div>
-      ${postText ? `<div class="intro"><div class="intro-text">${postText.replace(/\n/g,'<br>')}</div></div>` : ''}
-      <div class="empty"><div class="empty-icon">🍷</div><div class="empty-text">${t.empty}</div></div>`;
+function render(postText,wines){
+  const app=document.getElementById('app');
+  if(!wines.length){
+    app.innerHTML=`<div class="header"><div class="brand">Entre Nous</div><div class="header-sub">${t.subtitle}</div></div>${postText?`<div class="intro"><div class="intro-text">${esc(postText).replace(/\n/g,'<br>')}</div></div>`:''}<div class="empty"><div class="empty-icon">🍷</div><div class="empty-text">${t.empty}</div></div>`;
     return;
   }
-
-  const cardsHtml = wines.map((w, i) => {
-    const instock = (w.available || 'yes') === 'yes';
-    const deliveryText = instock
-      ? (w.delivery || 'Available immediately')
-      : (w.delivery || '1-2 weeks');
-    const qty = w.quantity ? `${w.quantity} ${t.bottles}` : '—';
-    const price = w.price ? `${w.price} EUR` : '';
-
-    return `
-    <div class="wine-card">
-      <div class="wine-body">
-        <div class="wine-name">${esc(w.name || '—')}</div>
-        <div class="wine-tags">
-          ${w.type ? `<span class="tag tag-type">${esc(w.type)}</span>` : ''}
-          <span class="tag ${instock?'tag-instock':'tag-preorder'}">${instock ? t.instock : t.preorder}</span>
-        </div>
-        <div class="wine-details">
-          <div class="detail">
-            <div class="detail-label">${t.delivery}</div>
-            <div class="detail-val">${esc(deliveryText)}</div>
-          </div>
-          <div class="detail">
-            <div class="detail-label">${t.quantity}</div>
-            <div class="detail-val">${esc(qty)}</div>
-          </div>
-        </div>
-      </div>
-      <div class="wine-footer">
-        <div>
-          <div class="price">${esc(price)}</div>
-          <div class="price-sub">${t.perBottle}</div>
-        </div>
-        ${price ? `<button class="order-btn" onclick="placeOrder('${esc(w.name)}','${esc(price)}')">${t.order}</button>` : ''}
-      </div>
-    </div>`;
+  const rows=wines.map((w,i)=>{
+    const instock=(w.available||'yes')==='yes';
+    const delivery=w.delivery||(instock?t.immediately:'1-2 weeks');
+    return `<tr onclick="openSheet(${i})">
+      <td><div class="wine-name">${esc(w.name||'—')}</div><div class="wine-type">${esc(w.type||'')}</div></td>
+      <td><span class="badge ${instock?'badge-yes':'badge-no'}">${instock?t.instock:t.preorder}</span></td>
+      <td><div class="delivery-text">${esc(delivery)}</div></td>
+      <td><div class="qty-text">${w.quantity||'—'}</div></td>
+      <td><div class="price-text">${w.price?w.price+' €':'—'}</div></td>
+      <td><button class="order-btn" onclick="event.stopPropagation();openSheet(${i})">${t.order}</button></td>
+    </tr>`;
   }).join('');
-
-  app.innerHTML = `
+  app.innerHTML=`
     <div class="header"><div class="brand">Entre Nous</div><div class="header-sub">${t.subtitle}</div></div>
-    ${postText ? `<div class="intro"><div class="intro-text">${postText.replace(/\n/g,'<br>')}</div></div><div class="divider"></div>` : ''}
+    ${postText?`<div class="intro"><div class="intro-text">${esc(postText).replace(/\n/g,'<br>')}</div></div>`:''}
     <div class="section-label">${t.wines}</div>
-    <div class="wines">${cardsHtml}</div>`;
+    <div class="table-wrap"><table>
+      <thead><tr><th>Wine</th><th></th><th>${t.delivery}</th><th>${t.quantity}</th><th>Price</th><th></th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
 }
 
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/'/g,'&#39;');
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function openSheet(i){
+  const w=winesData[i];
+  const instock=(w.available||'yes')==='yes';
+  const delivery=w.delivery||(instock?t.immediately:'1-2 weeks');
+  document.getElementById('sheet-content').innerHTML=`
+    <div class="sheet-handle"></div>
+    <div class="sheet-name">${esc(w.name||'')}</div>
+    <div class="sheet-type">${esc(w.type||'')} · <span style="color:${instock?'#6ddb8a':'#D4AF6A'}">${instock?t.instock:t.preorder}</span></div>
+    <div class="sheet-row"><span class="sheet-label">${t.delivery}</span><span class="sheet-val">${esc(delivery)}</span></div>
+    <div class="sheet-row"><span class="sheet-label">${t.quantity}</span><span class="sheet-val">${w.quantity||'—'} btl.</span></div>
+    <div class="sheet-price">${w.price?w.price+' EUR':''}</div>
+    <button class="sheet-order-btn" onclick="placeOrder('${esc(w.name)}','${w.price?w.price+' EUR':''}')">${t.order}</button>
+    <button class="sheet-cancel" onclick="closeSheet()">${t.cancel}</button>`;
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('sheet').classList.add('open');
 }
 
-async function placeOrder(wine, price) {
-  const user = tg.initDataUnsafe?.user;
-  const user_id = user?.id;
-  const name = user ? (user.first_name + (user.last_name ? ' '+user.last_name : '')) : 'Client';
+function closeSheet(){
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('sheet').classList.remove('open');
+}
 
-  document.getElementById('app').innerHTML = `
-    <div class="success"><div class="success-icon">⏳</div><div class="success-title">Processing...</div></div>`;
-
-  try {
-    await fetch(API_URL + '/order', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({action:'order', wine, price, name, user_id, lang_code: lang})
-    });
-    document.getElementById('app').innerHTML = `
-      <div class="success">
-        <div class="success-icon">🍷</div>
-        <div class="success-title">${t.successTitle}</div>
-        <div class="success-sub">${t.successSub}</div>
-      </div>`;
+async function placeOrder(wine,price){
+  closeSheet();
+  const user=tg.initDataUnsafe?.user;
+  const user_id=user?.id;
+  const name=user?(user.first_name+(user.last_name?' '+user.last_name:'')):'Client';
+  document.getElementById('app').innerHTML=`<div class="success"><div class="success-icon">⏳</div><div class="success-title">Processing...</div></div>`;
+  try{
+    await fetch(API_URL+'/order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'order',wine,price,name,user_id,lang_code:lang})});
+    document.getElementById('app').innerHTML=`<div class="success"><div class="success-icon">🍷</div><div class="success-title">${t.successTitle}</div><div class="success-sub">${t.successSub}</div></div>`;
     tg.openTelegramLink('https://t.me/entrenous_access_bot');
-    setTimeout(() => tg.close(), 1800);
-  } catch(e) {
-    document.getElementById('app').innerHTML = `
-      <div class="loading"><div class="loading-brand">Entre Nous</div><div class="loading-sub">Error. Please try again.</div></div>`;
+    setTimeout(()=>tg.close(),1800);
+  }catch(e){
+    document.getElementById('app').innerHTML=`<div class="loading"><div class="loading-brand">Entre Nous</div><div class="loading-sub">Error. Please try again.</div></div>`;
   }
 }
-
 load();
 </script>
 </body>
