@@ -79,14 +79,6 @@ let winesData=[];
 async function load(){
   try{
     let postText='';
-    try{
-      const SOURCE_ID='1W8VBEXEuL0HC3vJwxwAs05PhhMi3fdwads_GFKkUYic';
-      const POSTS_GID='850944697';
-      const res=await fetch(`https://docs.google.com/spreadsheets/d/${SOURCE_ID}/export?format=csv&gid=${POSTS_GID}&t=${Date.now()}`);
-      const csv=await res.text();
-      const rows=csv.split('\n').map(r=>{const cells=[];let inQ=false,cur='';for(const ch of r){if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){cells.push(cur.trim());cur='';}else cur+=ch;}cells.push(cur.trim());return cells;});
-      for(const row of rows.slice(1)){if(String(row[0]).trim()===String(postId).trim()){postText=row[3]||'';break;}}
-    }catch(e){}
     const wRes=await fetch(`${API_URL}/collection/load?post_id=${postId}`);
     const wData=await wRes.json();
     winesData=wData.wines||[];
