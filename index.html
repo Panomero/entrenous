@@ -190,6 +190,38 @@ if (storedRef) {
     link.href = 'https://t.me/entrenous_access_bot?start=ref_' + storedRef;
   });
 }
+
+// Track landing visit
+(function() {
+  var fp = [navigator.userAgent, screen.width, screen.height, navigator.language].join('|');
+  fetch('https://entre-nous-bot-production.up.railway.app/track', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ref: storedRef || 'direct', event: 'landing_visit', fingerprint: fp})
+  }).catch(function(){});
+
+  // Track TG click
+  document.querySelectorAll('a[href*="t.me"]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      fetch('https://entre-nous-bot-production.up.railway.app/track', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ref: storedRef || 'direct', event: 'tg_click', fingerprint: fp})
+      }).catch(function(){});
+    });
+  });
+
+  // Track WA click
+  document.querySelectorAll('a[href*="whatsapp"]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      fetch('https://entre-nous-bot-production.up.railway.app/track', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ref: storedRef || 'direct', event: 'wa_click', fingerprint: fp})
+      }).catch(function(){});
+    });
+  });
+})();
 </script>
 </body>
 </html>
