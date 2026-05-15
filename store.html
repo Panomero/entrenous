@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Entre Nous — Wine Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #080808;
+  --card: #131313;
+  --border: rgba(201,168,76,0.15);
+  --gold: #C9A84C;
+  --gold-dim: rgba(201,168,76,0.08);
+  --text: #F0EEE8;
+  --muted: rgba(240,238,232,0.38);
+  --faint: rgba(240,238,232,0.18);
+}
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; min-height: 100vh; padding-bottom: 4rem; -webkit-font-smoothing: antialiased; }
+.header { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 1.25rem; border-bottom: 1px solid rgba(201,168,76,0.1); position: sticky; top: 0; background: rgba(8,8,8,0.96); backdrop-filter: blur(16px); z-index: 100; }
+.brand-name { font-family: 'Playfair Display', serif; font-size: 1.1rem; }
+.brand-name em { color: var(--gold); font-style: italic; }
+.brand-sub { font-size: 0.5rem; letter-spacing: 0.32em; color: var(--gold); text-transform: uppercase; margin-top: 2px; opacity: 0.7; }
+.header-back { font-size: 0.7rem; color: var(--muted); text-decoration: none; letter-spacing: 0.05em; transition: color 0.2s; }
+.header-back:hover { color: var(--text); }
+.page-intro { padding: 1.8rem 1.25rem 1rem; }
+.page-title { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 400; font-style: italic; margin-bottom: 0.3rem; }
+.page-sub { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.05em; }
+.filters { padding: 0 1.25rem 1.2rem; display: flex; gap: 0.45rem; overflow-x: auto; scrollbar-width: none; }
+.filters::-webkit-scrollbar { display: none; }
+.filter-btn { padding: 0.38rem 0.9rem; border: 1px solid rgba(201,168,76,0.2); border-radius: 20px; background: transparent; color: var(--muted); font-size: 0.7rem; cursor: pointer; white-space: nowrap; transition: all 0.2s; font-family: 'Inter', sans-serif; letter-spacing: 0.04em; }
+.filter-btn:hover { border-color: var(--gold); color: var(--gold); }
+.filter-btn.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
+.section-label { padding: 0 1.25rem 0.5rem; font-size: 0.6rem; letter-spacing: 0.25em; color: rgba(201,168,76,0.5); text-transform: uppercase; }
+.cards { padding: 0 1.25rem; display: flex; flex-direction: column; gap: 0.7rem; animation: fadeIn 0.5s ease both; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.wine-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; transition: border-color 0.25s; position: relative; }
+.wine-card:hover { border-color: rgba(201,168,76,0.32); }
+.wine-card::before { content: ''; position: absolute; left: 0; top: 14%; bottom: 14%; width: 2px; border-radius: 1px; background: var(--gold); opacity: 0.4; }
+.wine-left { flex: 1; padding: 1.1rem 1rem 1rem 1.1rem; display: flex; flex-direction: column; min-width: 0; }
+.wine-type { display: flex; align-items: center; gap: 0.45rem; margin-bottom: 0.6rem; }
+.wine-type-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.wine-type-text { font-size: 0.62rem; letter-spacing: 0.22em; color: var(--gold); text-transform: uppercase; opacity: 0.7; }
+.wine-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-style: italic; line-height: 1.2; color: var(--text); margin-bottom: 0.25rem; }
+.wine-winery { font-size: 0.62rem; letter-spacing: 0.18em; color: var(--gold); text-transform: uppercase; margin-bottom: 0.65rem; opacity: 0.85; }
+.wine-divider { height: 1px; background: rgba(201,168,76,0.1); margin-bottom: 0.6rem; }
+.wine-specs { font-size: 0.68rem; color: var(--muted); margin-bottom: 0.55rem; }
+.wine-desc { font-family: 'Playfair Display', serif; font-size: 0.78rem; font-style: italic; color: rgba(240,238,232,0.62); line-height: 1.55; margin-bottom: 0.8rem; flex: 1; }
+.wine-stock { font-size: 0.6rem; color: var(--faint); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.45rem; }
+.wine-price { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--text); line-height: 1; }
+.wine-price span { font-family: 'Inter', sans-serif; font-size: 0.65rem; color: var(--gold); letter-spacing: 0.08em; margin-left: 0.3rem; vertical-align: middle; }
+.wine-right { width: 108px; flex-shrink: 0; background: linear-gradient(135deg, #1c1508 0%, #111111 100%); border-left: 1px solid rgba(201,168,76,0.1); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 1.1rem 0.6rem 0.9rem; }
+.logo-block { display: flex; flex-direction: column; align-items: center; }
+.logo-entre { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-style: italic; color: var(--text); opacity: 0.88; line-height: 1.2; }
+.logo-nous { font-family: 'Playfair Display', serif; font-size: 0.95rem; font-style: italic; color: var(--gold); line-height: 1.2; }
+.logo-line { width: 40px; height: 1px; background: var(--gold); opacity: 0.28; margin: 0.35rem 0; }
+.logo-sub { font-size: 0.45rem; letter-spacing: 0.25em; color: var(--gold); text-align: center; opacity: 0.5; line-height: 1.6; }
+.order-btn { width: 100%; padding: 0.6rem 0; background: var(--gold); border: none; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em; color: #0a0a0a; cursor: pointer; transition: opacity 0.2s; text-transform: uppercase; }
+.order-btn:hover { opacity: 0.85; }
+.cellar-sep { margin: 1.4rem 1.25rem 0.8rem; display: flex; align-items: center; gap: 0.75rem; }
+.cellar-sep-line { flex: 1; height: 1px; background: rgba(201,168,76,0.1); }
+.cellar-sep-text { font-size: 0.6rem; letter-spacing: 0.2em; color: rgba(201,168,76,0.45); text-transform: uppercase; white-space: nowrap; }
+.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 300; align-items: flex-end; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: #141414; border: 1px solid rgba(201,168,76,0.15); border-radius: 18px 18px 0 0; padding: 1.4rem 1.25rem 2.5rem; width: 100%; max-width: 430px; animation: slideUp 0.28s cubic-bezier(.16,1,.3,1); }
+@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-handle { width: 32px; height: 3px; background: rgba(201,168,76,0.2); border-radius: 2px; margin: 0 auto 1.2rem; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; margin-bottom: 0.2rem; color: var(--text); }
+.modal-wine { font-size: 0.68rem; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 1.3rem; opacity: 0.8; }
+.modal-options { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1rem; }
+.modal-opt { display: flex; align-items: center; gap: 0.8rem; padding: 0.85rem 1rem; border: 1px solid rgba(201,168,76,0.15); border-radius: 11px; background: rgba(255,255,255,0.02); color: var(--text); font-size: 0.8rem; cursor: pointer; text-decoration: none; transition: border-color 0.2s, background 0.2s; font-family: 'Inter', sans-serif; }
+.modal-opt:hover { border-color: rgba(201,168,76,0.35); background: rgba(201,168,76,0.04); }
+.modal-opt-icon { font-size: 1.1rem; flex-shrink: 0; }
+.modal-opt-title { font-weight: 500; margin-bottom: 0.1rem; }
+.modal-opt-sub { font-size: 0.62rem; color: var(--muted); }
+.modal-or { text-align: center; font-size: 0.62rem; color: var(--muted); margin: 0.8rem 0; letter-spacing: 0.08em; }
+.modal-form { display: flex; flex-direction: column; gap: 0.55rem; }
+.modal-input { padding: 0.8rem 1rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(201,168,76,0.15); border-radius: 10px; color: var(--text); font-size: 0.8rem; font-family: 'Inter', sans-serif; transition: border-color 0.2s; }
+.modal-input:focus { outline: none; border-color: var(--gold); }
+.modal-input::placeholder { color: var(--muted); }
+.modal-submit { padding: 0.85rem; background: var(--gold); color: #000; border: none; border-radius: 10px; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; font-family: 'Inter', sans-serif; transition: opacity 0.2s; }
+.modal-submit:hover { opacity: 0.85; }
+.modal-cancel { width: 100%; margin-top: 0.6rem; padding: 0.6rem; background: transparent; border: none; color: var(--muted); font-size: 0.72rem; cursor: pointer; font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="brand-name">Entre <em>Nous</em></div>
+    <div class="brand-sub">Private Selection</div>
+  </div>
+  <a href="index.html" class="header-back">← Back</a>
+</div>
+
+<div class="page-intro">
+  <div class="page-title">Wine Store</div>
+  <div class="page-sub">Curated selection · Updated in real time</div>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" onclick="filter('all',this)">All</button>
+  <button class="filter-btn" onclick="filter('sparkling',this)">Sparkling</button>
+  <button class="filter-btn" onclick="filter('red',this)">Red</button>
+  <button class="filter-btn" onclick="filter('white',this)">White</button>
+  <button class="filter-btn" onclick="filter('rosé',this)">Rosé</button>
+</div>
+
+<div class="section-label">Main collection</div>
+<div class="cards">
+
+  <div class="wine-card" data-type="sparkling">
+    <div class="wine-left">
+      <div class="wine-type"><div class="wine-type-dot" style="background:#3d6e3d"></div><div class="wine-type-text">Sparkling</div></div>
+      <div class="wine-name">Champagne Blanc de Blancs</div>
+      <div class="wine-winery">Billecart-Salmon</div>
+      <div class="wine-divider"></div>
+      <div class="wine-specs">0.75 L · Non-vintage · 100% Chardonnay</div>
+      <div class="wine-desc">Pure, precise and luminous. Citrus blossom, white peach and chalky minerality — the hallmark of Côte des Blancs fruit handled with restraint.</div>
+      <div class="wine-stock">24 bottles available</div>
+      <div class="wine-price">76 <span>EUR / bottle</span></div>
+    </div>
+    <div class="wine-right">
+      <div class="logo-block"><div class="logo-entre">Entre</div><div class="logo-nous">Nous</div><div class="logo-line"></div><div class="logo-sub">PRIVATE<br>SELECTION</div></div>
+      <button class="order-btn" onclick="openModal('Champagne Blanc de Blancs','Billecart-Salmon','76')">Order</button>
+    </div>
+  </div>
+
+  <div class="wine-card" data-type="rosé">
+    <div class="wine-left">
+      <div class="wine-type"><div class="wine-type-dot" style="background:#8b3a3a"></div><div class="wine-type-text">Sparkling · Rosé</div></div>
+      <div class="wine-name">Champagne Rosé</div>
+      <div class="wine-winery">Billecart-Salmon</div>
+      <div class="wine-divider"></div>
+      <div class="wine-specs">0.75 L · Non-vintage · Pinot Noir blend</div>
+      <div class="wine-desc">Delicate salmon, fine persistent mousse. Wild strawberry, rose petal and a long dry finish with remarkable freshness.</div>
+      <div class="wine-stock">18 bottles available</div>
+      <div class="wine-price">72 <span>EUR / bottle</span></div>
+    </div>
+    <div class="wine-right">
+      <div class="logo-block"><div class="logo-entre">Entre</div><div class="logo-nous">Nous</div><div class="logo-line"></div><div class="logo-sub">PRIVATE<br>SELECTION</div></div>
+      <button class="order-btn" onclick="openModal('Champagne Rosé','Billecart-Salmon','72')">Order</button>
+    </div>
+  </div>
+
+  <div class="wine-card" data-type="red">
+    <div class="wine-left">
+      <div class="wine-type"><div class="wine-type-dot" style="background:#7a1a1a"></div><div class="wine-type-text">Red · 2022</div></div>
+      <div class="wine-name">Châteauneuf-du-Pape</div>
+      <div class="wine-winery">Château de Beaucastel</div>
+      <div class="wine-divider"></div>
+      <div class="wine-specs">0.75 L · 2022 · Grenache blend · Biodynamic</div>
+      <div class="wine-desc">Thirteen varieties, ancient galets roulés. Dense, structured, built for time. Reveals fully at 16–18°C.</div>
+      <div class="wine-stock">42 bottles available</div>
+      <div class="wine-price">85 <span>EUR / bottle</span></div>
+    </div>
+    <div class="wine-right">
+      <div class="logo-block"><div class="logo-entre">Entre</div><div class="logo-nous">Nous</div><div class="logo-line"></div><div class="logo-sub">PRIVATE<br>SELECTION</div></div>
+      <button class="order-btn" onclick="openModal('Châteauneuf-du-Pape','Château de Beaucastel','85')">Order</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="cellar-sep">
+  <div class="cellar-sep-line"></div>
+  <div class="cellar-sep-text">Wine Cellar — rare finds</div>
+  <div class="cellar-sep-line"></div>
+</div>
+
+<div class="cards">
+
+  <div class="wine-card" data-type="red">
+    <div class="wine-left">
+      <div class="wine-type"><div class="wine-type-dot" style="background:#7a1a1a"></div><div class="wine-type-text">Red · 2019</div></div>
+      <div class="wine-name">Barolo Cannubi</div>
+      <div class="wine-winery">Marchesi di Barolo</div>
+      <div class="wine-divider"></div>
+      <div class="wine-specs">0.75 L · 2019 · Nebbiolo · Piedmont</div>
+      <div class="wine-desc">From the legendary Cannubi cru. Tar, dried roses and iron. A wine that demands patience and rewards it generously.</div>
+      <div class="wine-stock">6 bottles available</div>
+      <div class="wine-price">120 <span>EUR / bottle</span></div>
+    </div>
+    <div class="wine-right">
+      <div class="logo-block"><div class="logo-entre">Entre</div><div class="logo-nous">Nous</div><div class="logo-line"></div><div class="logo-sub">PRIVATE<br>SELECTION</div></div>
+      <button class="order-btn" onclick="openModal('Barolo Cannubi','Marchesi di Barolo','120')">Order</button>
+    </div>
+  </div>
+
+  <div class="wine-card" data-type="sparkling">
+    <div class="wine-left">
+      <div class="wine-type"><div class="wine-type-dot" style="background:#3d6e3d"></div><div class="wine-type-text">Sparkling · 2015</div></div>
+      <div class="wine-name">Dom Pérignon</div>
+      <div class="wine-winery">Moët & Chandon</div>
+      <div class="wine-divider"></div>
+      <div class="wine-specs">0.75 L · 2015 · Chardonnay & Pinot Noir</div>
+      <div class="wine-desc">A warm, generous vintage. Toasted brioche, cream, white truffle. The kind of bottle that justifies opening early — or keeping another decade.</div>
+      <div class="wine-stock">3 bottles available</div>
+      <div class="wine-price">280 <span>EUR / bottle</span></div>
+    </div>
+    <div class="wine-right">
+      <div class="logo-block"><div class="logo-entre">Entre</div><div class="logo-nous">Nous</div><div class="logo-line"></div><div class="logo-sub">PRIVATE<br>SELECTION</div></div>
+      <button class="order-btn" onclick="openModal('Dom Pérignon','Moët & Chandon','280')">Order</button>
+    </div>
+  </div>
+
+  <div class="wine-card" data-type="white">
+    <div class="wine-left">
+      <div class="wine-type"><div class="wine-type-dot" style="background:#8a8020"></div><div class="wine-type-text">White · 2022</div></div>
+      <div class="wine-name">Sancerre Blanc</div>
+      <div class="wine-winery">Henri Bourgeois</div>
+      <div class="wine-divider"></div>
+      <div class="wine-specs">0.75 L · 2022 · Sauvignon Blanc · Loire</div>
+      <div class="wine-desc">Crisp, mineral and pure. Citrus blossom, gooseberry and a flinty finish that defines the appellation at its best.</div>
+      <div class="wine-stock">12 bottles available</div>
+      <div class="wine-price">55 <span>EUR / bottle</span></div>
+    </div>
+    <div class="wine-right">
+      <div class="logo-block"><div class="logo-entre">Entre</div><div class="logo-nous">Nous</div><div class="logo-line"></div><div class="logo-sub">PRIVATE<br>SELECTION</div></div>
+      <button class="order-btn" onclick="openModal('Sancerre Blanc','Henri Bourgeois','55')">Order</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeIfOutside(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Place an order</div>
+    <div class="modal-wine" id="modalLabel"></div>
+    <div class="modal-options">
+      <a href="#" class="modal-opt" id="tgBtn">
+        <span class="modal-opt-icon">✈️</span>
+        <div><div class="modal-opt-title">Order via Telegram</div><div class="modal-opt-sub">Chat with our AI assistant instantly</div></div>
+      </a>
+      <a href="https://whatsapp.com/channel/0029Vb7x5cm8aKvQqVtU541u" class="modal-opt">
+        <span class="modal-opt-icon">💬</span>
+        <div><div class="modal-opt-title">Order via WhatsApp</div><div class="modal-opt-sub">Message us directly</div></div>
+      </a>
+    </div>
+    <div class="modal-or">— or leave your contact —</div>
+    <div class="modal-form">
+      <input class="modal-input" id="cName" type="text" placeholder="Your name"/>
+      <input class="modal-input" id="cContact" type="text" placeholder="Phone or @telegram"/>
+      <button class="modal-submit" onclick="submitContact()">Send request</button>
+    </div>
+    <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<script>
+var cur = {};
+function openModal(name, winery, price) {
+  cur = {name, winery, price};
+  document.getElementById('modalLabel').textContent = name + ' · ' + winery + ' · ' + price + ' EUR';
+  document.getElementById('tgBtn').href = 'https://t.me/entrenous_access_bot?start=order_store_' + encodeURIComponent(name);
+  document.getElementById('cName').value = '';
+  document.getElementById('cContact').value = '';
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeIfOutside(e) { if (e.target === document.getElementById('modalOverlay')) closeModal(); }
+function filter(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.wine-card').forEach(c => { c.style.display = (type === 'all' || c.dataset.type === type) ? '' : 'none'; });
+}
+function submitContact() {
+  var name = document.getElementById('cName').value.trim();
+  var contact = document.getElementById('cContact').value.trim();
+  if (!name || !contact) { alert('Please fill in both fields'); return; }
+  fetch('https://entre-nous-bot-production.up.railway.app/store-contact', {
+    method: 'POST', headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name, contact, wine: cur.name, winery: cur.winery, price: cur.price})
+  }).catch(() => {});
+  closeModal();
+  alert('✅ We will contact you shortly.');
+}
+</script>
+</body>
+</html>
